@@ -1,6 +1,7 @@
 rm(list = ls())
 set.seed(0)
 hospitalization <- read.csv("dataset.csv")
+library(gamlr)
 attach(hospitalization)
 
 # Checking dimensions
