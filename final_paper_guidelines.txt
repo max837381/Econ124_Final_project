@@ -1,0 +1,37 @@
+FINAL PAPER GUIDELINES
+
+The minimum page length is 8 pages. Keep in mind that this includes regression output, summary statistics, relevant figures, and possibly summaries of related papers.
+
+Here is a possible outline for the paper. You are not required to follow it, but these are points you should be addressing in your paper.
+
+*Introduction
+ -State your research question. Why is it interesting?
+ -Optionally summarize a paper (or several papers) on the topic and how what you're doing compares.
+*Data
+ -Discuss the data, where you got it from, and its limitations for answering your research question.
+ -What is an observation in your dataset? Is your sample representative?
+ -Provide summary statistics to give the reader a sense of your data, especially those relevant to your main analysis later. 
+   -See for example the first few questions in HW 1 and 2 where we compute statistics or make scatterplots or run preliminary simple regressions that reveal correlations between interesting variables. 
+   -For key variables in your analysis, you could make a table of mean, SD, median, min, max or present a boxplot and comment on what these tell you about the distribution of the variables. 
+   -Don't create tables of statistics or plots for no reason. They have to tell the reader something that's pertinent to your analysis later.
+*Methodology
+ -What methods will you use?
+ -What assumptions need to hold for them to be valid? (E.g. valid controls for causal inference or future data looking like the past for ML predictions.)
+ -To what extent are the assumptions plausible in your dataset? <-- VERY IMPORTANT!
+*Main results
+ -Discuss the results of your analysis. DON'T provide a massive regression table of all your coefficients. Instead, judiciously summarize the ones most pertinent to your research question.
+ -If the goal is simple ML prediction, provide measures of out-of-sample predictive performance (AICc or CV). If you ran lasso, highlight some of the nonzero betas and discuss any interesting inclusions or omissions like you did in HW3. What could your prediction be used for, if you imagine giving your model to a government or non-governmental organization, and what would be the pros and cons of them using it (see e.g. last problem in HW3)?
+ -If you estimated a causal effect, print the estimate of the effect and its standard error. Provide an economic interpretation of the effect, like you did in HW3. Is the effect significant? Optionally, is there any interesting counterfactual prediction exercise you could do (see lecture 4 and HW 4)?
+ -If you still have pages to fill, look back at the questions asked in the HWs and the empirical examples in the lectures to get a sense of what else you can include in the paper. E.g. using ROC curves for binary outcomes.
+
+Some tips:
+ -For simple ML prediction tasks, your main method will be lasso. Optionally, you can also use random forests and seeing which one does best using cross-validation. This is an easy way to show understanding of multiple ML methods. The key assumption you need to discuss is that the future population you're trying to predict is the same population from which your sample was drawn.
+ -For causal or counterfactual prediction tasks, you will be relying on control variables. Your main method will be post-lasso. Make sure to discuss why your controls are useful and what important variables are omitted.
+
+IMPORTANT NOTE: Nobody will have a bulletproof idea. There will always be some reason why your assumptions may not be plausible, and you need to be open about it. Your goal is not to defend your methods. It is instead to critically assess their plausibility, as if this were someone else's analysis and your job was to poke holes in it. If you find that the assumptions required are largely not credible for good reasons X, Y, and Z, then that's great; simply state those reasons in the paper. The dataset and methods you use are just a platform for you to demonstrate your understanding of class concepts, not to sell me on your methods. 
+
+
+PROJECT PROPOSAL GUIDELINES
+
+This is a half-page paper. State your research question, what data source you're planning to use, and what methods from class you'll use to answer your research question.
+
