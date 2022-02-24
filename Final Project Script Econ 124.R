@@ -1,6 +1,6 @@
 rm(list = ls())
 set.seed(0)
-hospitalization <- read.csv("dataset.csv")
+hospitalization <- read.csv("hospitalization.csv")
 library(gamlr)
 attach(hospitalization)
 
@@ -60,7 +60,7 @@ dim(X)
 rm(Not_unique)
 rm(Not_unique2)
 rm(Not_unique3)
-
+hospitalization[is.na(hospitalization)] <- 0
 X <- naref(X)
 dim(X)
 # Remove Y variable from data frame that will become the X matrix
