@@ -16,7 +16,7 @@ Here is a possible outline for the paper. You are not required to follow it, but
    -Don't create tables of statistics or plots for no reason. They have to tell the reader something that's pertinent to your analysis later.
 *Methodology
  -What methods will you use?
- -What assumptions need to hold for them to be valid? (E.g. valid controls for causal inference or future data looking like the past for ML predictions.)
+ **-What assumptions need to hold for them to be valid? (E.g. valid controls for causal inference or future data looking like the past for ML predictions.)**
  -To what extent are the assumptions plausible in your dataset? <-- VERY IMPORTANT!
 *Main results
  -Discuss the results of your analysis. DON'T provide a massive regression table of all your coefficients. Instead, judiciously summarize the ones most pertinent to your research question.
