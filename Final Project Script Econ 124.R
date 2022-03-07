@@ -16,8 +16,17 @@ ddi <- read_ipums_ddi("/Users/max/Documents/UCSC/Winter 2022/Econ 124/Econ124_Fi
 data <- read_ipums_micro(cps_ddi)
 
 df <- read.csv("cps_00007.csv")
+# remove unnecessary variables
+df <- subset(df, select = -c(2,4,5,6,7,8))
+summary(jan22$YEAR)
 
+dec21 <- df[df$YEAR==2021,]
+jan22 <- df[df$YEAR==2022,]
 
+# dec21 will be the dataset we will be using. Then we will check on the jan 22 data to see if our predictions for binary classifications are accurate. (IS vs OOS)
+
+head(dec21)
+dim(dec21)
 
 
 
