@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="icon" href="/favicon.ico" sizes="16x16 32x32" type="image/x-icon">
+  <link rel="icon" href="/favicon-96x96.png" sizes="96x96" type="image/x-icon">
+  <link rel="apple-touch-icon" href="/favicon-152x152.png">
+  <meta name="msapplication-TileColor" content="#00263a">
+  <meta name="msapplication-TileImage" content="/favicon-144x144.png">
+
+  <title>IPUMS Login</title>
+
+  <link rel="stylesheet" media="all" href="/assets/application-7fdc94847f700e90d7ec906195b158f501ea1e9316828a8dcba821879ce6322e.css" />
+  
+
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="/assets/html5shiv.min-6854fd249499e7f06d544a21dd65154fe99b6c0975084226193056bc5973998e.js"></script>
+  <script src="/assets/respond.min-0bc0855c17faf48229b53ba1afcde20ffc7dd05b8ff3014b5493045bfd1c5284.js"></script>
+  <![endif]-->
+
+  <meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="4NV8MAT9wM6QIcjd6x38ELtpe058OSQHMGk9iJ5Ny5PI2klCE7kMR8BxWcuXAXrSJGthTTbYfX1VppQXEWLgkQ==" />
+  
+
+</head>
+<body>
+<div class="container">
+  <div class="row">
+    <header id="mpcHeader" class="col-xs-12">
+      <a href="https://www.ipums.org">
+        <img alt="IPUMS" id="ipums-logo" src="/assets/logoIPUMS-bc26fd2a35c9a01afaf77131f51186abe59f9f6e887c89e0f5c4b96aaaabac32.png" />
+      </a>
+
+      <div id="project-logos">
+        <a href="https://usa.ipums.org/usa/"><img alt="Integrated Public Use Microdata Series (IPUMS) USA" title="Integrated Public Use Microdata Series (IPUMS) USA" src="/assets/logo-usa-3ad693b36eda19408dad8201bec872011951402c1d8b94e2ee038c673da9fe4b.png" /></a>
+        <a href="https://cps.ipums.org/cps/"><img alt="Integrated Public Use Microdata Series (IPUMS) CPS" title="Integrated Public Use Microdata Series (IPUMS) CPS" src="/assets/logo-cps-2b06210c097bb5b16f86d9fd614c2f326aad1be038119eabbe6b0f99639ab58b.png" /></a>
+        <a href="https://international.ipums.org/international/"><img alt="Integrated Public Use Microdata Series (IPUMS) International" title="Integrated Public Use Microdata Series (IPUMS) International" src="/assets/logo-ipumsi-e97e50c47c7b6d4e421c6c4dbda7d26a9a32bda9591b28872060f255eed8a057.png" /></a>
+        <a href="https://www.ipums.org/timeuse.html"><img alt="Integrated Public Use Microdata Series (IPUMS) Time Use Projects" title="Integrated Public Use Microdata Series (IPUMS) Time Use Projects" src="/assets/logo-time-94635f125829e10759453010ff0144f581c06a02b45fcc3f5e6a723c5a2d5f1a.png" /></a>
+        <a href="https://www.nhgis.org/"><img alt="National Historical Geographic Information System (NHGIS)" title="National Historical Geographic Information System (NHGIS)" src="/assets/logo-nhgis-e88fc78cffc0c2913aefd49a3dea6bf3e59151af17e4f083748abc7fa7013181.png" /></a>
+        <a href="https://www.idhsdata.org/idhs/"><img alt="Integrated Demographic and Health Series (IDHS)" title="Integrated Demographic and Health Series (IDHS)" src="/assets/logo-dhs-b1d64e41535c3ce332c72cf934469e4ecce4fb7d1030ef0346abc29ac2f114e7.png" /></a>
+        <a href="https://highered.ipums.org/"><img alt="Integrated Public Use Microdata Series (IPUMS) Higher Ed" title="Integrated Public Use Microdata Series (IPUMS) Higher Ed" src="/assets/logo-he-7696cb7f3c12ad15998c0ab78ae5562e3483f4b8d6baae73fe0b204a30168684.png" /></a>
+        <a href="https://nhis.ipums.org/nhis/"><img alt="National Health Interview Survey (NHIS)" title="National Health Interview Survey (NHIS)" src="/assets/logo-health-5c2e514d43a10f8b635738bd963bf66e7f09732c944feb435f5ae2ad0401400a.png" /></a>
+        <a href="https://www.terrapop.org/"><img alt="IPUMS Terra" title="IPUMS Terra" src="/assets/logo-terrapop-cb8afe39b50f0a38205ee8b0b6bfa4a2e9aebb461e08a3a94d2c48ed1017b75a.png" /></a>
+      </div>
+
+    </header>
+  </div>
+</div>
+<div id="container_background">
+  <div id="content_container" class="container">
+
+    <div class="row">
+      <div class="full-width col-xs-12">
+          <!--<div class="header-image"></div>-->
+      </div>
+    </div>
+
+  <section id="flashContainer"></section>
+
+
+
+
+
+    
+<div class="login-page">
+  <div class="row">
+    <div class="col-xs-12 page-header">
+      <h2>Log in to IPUMS</h2>
+    </div>
+  </div>
+
+  
+
+  <div class="row">
+    <section class="login-col login-form col-md-5 col-sm-6">
+      <form class="new_login" id="new_login" action="/authentication/login" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><input type="hidden" name="authenticity_token" value="3P5iR/ciC57p8aXmweG/R8gybZcom+pC12QWrY0N6RP08Vc14GbHF7mhNPC9/TmFVzB3lGJ6sziyq78yAiLCEQ==" />
+
+        <div class="form-group"><label class="control-label" for="login_email">Email Address</label>
+<input placeholder="Enter email" autofocus="autofocus" class="form-control" type="text" name="login[email]" id="login_email" /></div>
+
+        <div class="form-group"><label class="control-label" for="login_password">Password</label>
+<input placeholder="Enter password" class="form-control" type="password" name="login[password]" id="login_password" /></div>
+
+        <input type="submit" name="commit" value="Sign In" class="btn btn-primary" data-disable-with="Sign In" />
+
+</form>    </section>
+
+    <section class="login-col login-help col-md-7 col-sm-6">
+      <div class="hidden-sm hidden-md hidden-lg">
+        <br />
+      </div>
+      <p><a href="https://www.ipums.org">IPUMS</a> uses a <strong>common user management system</strong> for several data projects:  IPUMS International, IPUMS USA, IPUMS CPS, IPUMS Higher Ed, NHGIS, IPUMS Health Surveys, IPUMS Time Use, and IPUMS Terra.</p>
+
+      <p>If you already have an account with any of these projects, sign in here.  If you've not yet registered for IPUMS, you will be directed to the project registration page after signing in.</p>
+
+      <p>If you do not have an account for any IPUMS project, you may create one <a href="/user/new">here</a>.
+
+      <nav>
+        <h3>Help</h3>
+
+        <p>
+          <a href="/user/forgot_password">
+            <span class="glyphicon glyphicon-menu-right"></span> Forgot your password?
+</a>        </p>
+
+        <p>
+          <a href="/user/new">
+            <span class="glyphicon glyphicon-menu-right"></span> Create an account
+</a>          &mdash; <em>only for users who do not have an IPUMS account</em>
+        </p>
+
+      </nav>
+    </section>
+  </div>
+
+</div>
+
+
+  </div>
+</div>
+
+
+<script src="/assets/application-4c316c026049cb8eddb636c2ae67595430250255e101fe229f98ee6c93ea6209.js"></script>
+
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    
+  });
+</script>
+
+
+</body>
+</html>
