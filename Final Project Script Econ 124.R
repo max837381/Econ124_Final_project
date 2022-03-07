@@ -28,8 +28,13 @@ df <- read.table("datasets/drug_consumption.data", fileEncoding = "UTF-8", sep =
 
 hospitalization <- read.csv("datasets/hospitalization.csv")
 library(gamlr)
+<<<<<<< HEAD
 
 
+=======
+# Tamar test
+# Anthony Testing
+>>>>>>> 20ae62e207693173c6177fc80dfe6bdeedbf4aef
 # Checking dimensions
 dim(hospitalization)
 
