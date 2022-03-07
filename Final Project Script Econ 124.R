@@ -1,19 +1,6 @@
 rm(list = ls())
 set.seed(0)
 
-library(ipumsr)
-library(dplyr, warn.conflicts = FALSE)
-
-# Note that you can pass in the loaded DDI into the `read_ipums_micro()`
-cps_ddi <- read_ipums_ddi("cps_00007.xml")
-data <- read_ipums_micro(cps_ddi)
-# NOTE: To load data, you must download both the extract's data and the DDI
-# and also set the working directory to the folder with these files (or change the path below).
-library(ipumsr)
-if (!require("ipumsr")) stop("Reading IPUMS data into R requires the ipumsr package. It can be installed using the following command: install.packages('ipumsr')")
-
-ddi <- read_ipums_ddi("/Users/max/Documents/UCSC/Winter 2022/Econ 124/Econ124_Final_project/cps_00007.xml")
-data <- read_ipums_micro(cps_ddi)
 
 df <- read.csv("cps_00007.csv")
 # remove unnecessary variables
@@ -31,10 +18,13 @@ dim(dec21)
 
 
 
-df <- read.csv("/Users/max/Documents/UCSC/Winter 2022/Econ 124/Econ124_Final_project/datasets/student_data.csv")
-read.table("datasets/drug_consumption.data", fileEncoding="UTF-16", dec=",")
-df <- read.table("datasets/drug_consumption.data", fileEncoding = "UTF-8", sep = ",")
 
+
+
+
+################################################################################################################################################################################################################################
+
+## OLD ANALYSIS WITH WRONG DATASET
 hospitalization <- read.csv("datasets/hospitalization.csv")
 library(gamlr)
 <<<<<<< HEAD
