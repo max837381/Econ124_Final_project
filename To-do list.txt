@@ -2,6 +2,9 @@
 
 To-do list:
 
+General:
+- Export final paper to Overleaf.com for final formatting in LaTeX
+
 Anthony:
 - Outine of the final paper
 - Write as much as possible on introduction, data section etc.
