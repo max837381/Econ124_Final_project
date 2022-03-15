@@ -2,7 +2,7 @@
 
 If merge conflicts happen:
 
-git fetch origin
+git fetch origin\
 git reset --hard origin/master
 
 Anthony, Tamar and Max's final project for ECON 124: Machine Learning for Economists at UCSC.
