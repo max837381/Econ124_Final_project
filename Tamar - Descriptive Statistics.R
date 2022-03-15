@@ -1,5 +1,6 @@
 # Tamar - descriptive statistics and tables
 #do it for education, race, and gender
+#regression and then scatter plot
 library(dplyr)
 library(tidyr)
 df <- read.csv("cps_00007.csv") #loads the dataset
@@ -58,7 +59,7 @@ geneder_unemp_totals <- df %>%
 df$asian_pi <- ifelse(df$RACE >= 650 & df$RACE <= 652,1,0)
 df$mixed_ancestry <- ifelse(df$RACE >= 801 & df$RACE<= 999,1,0)
 
-#missing Latinx race group - not captured in race variable
+#missing Latinx race group - not captured in race variable (actually can be any race i think)
 df$race_group <- numeric(0)
 df$race_group[df$RACE==100] <- 1 #=1 if person is white
 df$race_group[df$RACE==200] <- 2 #=2 if person is Black
