@@ -1,0 +1,6 @@
+Merge Conflicts Code
+
+Use this in the terminal (not the R console):
+
+git fetch origin
+git reset --hard origin/master
