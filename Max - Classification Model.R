@@ -16,13 +16,45 @@ head(dec21)
 dim(dec21)
 
 
-
-
+dec21$unemp <- ifelse(dec21$EMPSTAT>=20 & dec21$EMPSTAT<=22,1,0) #creates a dummy variable =1 if person is unemployed
+df <- as.data.frame(dec21)
+#install.packages("caret")
+library(caret)
 
 ###################################################################################################
 ### Part 1: Training the model
 ###################################################################################################
 
+# Importing the data from Tamar's R file
+#rm(list = ls())
+#source("Tamar - Descriptive Statistics.R")
+# Set.seed function to replicate the random selections from our project's R code
+set.seed(124) 
+
+# Split our data using 80/20 for the training set and test set
+split = sort(sample(nrow(df), nrow(df)*.8))
+train <- df[split,]
+test <- df[-split,]
+
+# Run a logistic regression using training set
+logmodel <- glm(unemp ~ ., data=train, family = "binomial")
+summary(logmodel)
+##################
+
+## This part of the code doesn't work yet
+## \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+#################
+
+# Make predictions using test set
+predictions <- predict(logmodel, newdata=test, type = "response")
+pred_acc <- as.factor(ifelse(predictions>0.5,1,0))
+
+# Evaluate and show why we might want to use machine learning models
+
+# Caret library to compute a confusionmatrix
+library(caret)
+confusionMatrix(data = pred_acc,
+                reference = test$unemp)
 ## OLD ANALYSIS WITH WRONG DATASET
 hospitalization <- read.csv("datasets/hospitalization.csv")
 library(gamlr)
