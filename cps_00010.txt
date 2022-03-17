@@ -1,0 +1,1240 @@
+Description: Added region variables for Econ 124 Project
+Samples selected:
+      IPUMS-CPS, December 2021
+            Note: 
+            Density of the full data file:  0.01%
+            Density of your extract: 0.0%
+
+      IPUMS-CPS, January 2022
+            Note: 
+            Density of the full data file:  0.01%
+            Density of your extract: 0.0%
+
+File Type:                    rectangular
+Case Selection:               No
+  Variable               Columns        Len   12/2021 01/2022 
+  YEAR               H   1-4            4     X       X       
+  SERIAL             H   5-9            5     X       X       
+  MONTH              H  10-11           2     X       X       
+  HWTFINL            H  12-21          10     X       X       
+  CPSID              H  22-35          14     X       X       
+  STATEFIP           H  36-37           2     X       X       
+  METRO              H  38              1     X       X       
+  FAMINC             H  39-41           3     X       X       
+  PERNUM             P  42-43           2     X       X       
+  WTFINL             P  44-57          14     X       X       
+  CPSIDP             P  58-71          14     X       X       
+  AGE                P  72-73           2     X       X       
+  SEX                P  74              1     X       X       
+  RACE               P  75-77           3     X       X       
+  MARST              P  78              1     X       X       
+  POPSTAT            P  79              1     X       X       
+  VETSTAT            P  80              1     X       X       
+  BPL                P  81-85           5     X       X       
+  YRIMMIG            P  86-89           4     X       X       
+  CITIZEN            P  90              1     X       X       
+  MBPL               P  91-95           5     X       X       
+  FBPL               P  96-100          5     X       X       
+  NATIVITY           P 101              1     X       X       
+  HISPAN             P 102-104          3     X       X       
+  EMPSTAT            P 105-106          2     X       X       
+  OCC                P 107-110          4     X       X       
+  IND                P 111-114          4     X       X       
+  CLASSWKR           P 115-116          2     X       X       
+  UHRSWORKT          P 117-119          3     X       X       
+  AHRSWORKT          P 120-122          3     X       X       
+  WHYABSNT           P 123-124          2     X       X       
+  WKSTAT             P 125-126          2     X       X       
+  NUMJOB             P 127              1     X       X       
+  EDUC               P 128-130          3     X       X       
+  DIFFANY            P 131              1     X       X       
+  HOURWAGE           P 132-136          5     X       X       
+  PAIDHOUR           P 137              1     X       X       
+  UNION              P 138              1     X       X       
+  EARNWEEK           P 139-146          8     X       X       
+  COVIDTELEW         P 147-148          2     X       X       
+  COVIDUNAW          P 149-150          2     X       X       
+  COVIDPAID          P 151-152          2     X       X       
+  COVIDLOOK          P 153-154          2     X       X       
+
+Variable Availability Key:
+All Years X - available in this sample
+All Years . - not available in this sample
+
+RECTYPE   Record type
+H         Household
+P         Person
+
+MONTH               Month
+01                  January
+02                  February
+03                  March
+04                  April
+05                  May
+06                  June
+07                  July
+08                  August
+09                  September
+10                  October
+11                  November
+12                  December
+
+STATEFIP            State (FIPS code)
+01                  Alabama
+02                  Alaska
+04                  Arizona
+05                  Arkansas
+06                  California
+08                  Colorado
+09                  Connecticut
+10                  Delaware
+11                  District of Columbia
+12                  Florida
+13                  Georgia
+15                  Hawaii
+16                  Idaho
+17                  Illinois
+18                  Indiana
+19                  Iowa
+20                  Kansas
+21                  Kentucky
+22                  Louisiana
+23                  Maine
+24                  Maryland
+25                  Massachusetts
+26                  Michigan
+27                  Minnesota
+28                  Mississippi
+29                  Missouri
+30                  Montana
+31                  Nebraska
+32                  Nevada
+33                  New Hampshire
+34                  New Jersey
+35                  New Mexico
+36                  New York
+37                  North Carolina
+38                  North Dakota
+39                  Ohio
+40                  Oklahoma
+41                  Oregon
+42                  Pennsylvania
+44                  Rhode Island
+45                  South Carolina
+46                  South Dakota
+47                  Tennessee
+48                  Texas
+49                  Utah
+50                  Vermont
+51                  Virginia
+53                  Washington
+54                  West Virginia
+55                  Wisconsin
+56                  Wyoming
+61                  Maine-New Hampshire-Vermont
+65                  Montana-Idaho-Wyoming
+68                  Alaska-Hawaii
+69                  Nebraska-North Dakota-South Dakota
+70                  Maine-Massachusetts-New Hampshire-Rhode Island-Vermont
+71                  Michigan-Wisconsin
+72                  Minnesota-Iowa
+73                  Nebraska-North Dakota-South Dakota-Kansas
+74                  Delaware-Virginia
+75                  North Carolina-South Carolina
+76                  Alabama-Mississippi
+77                  Arkansas-Oklahoma
+78                  Arizona-New Mexico-Colorado
+79                  Idaho-Wyoming-Utah-Montana-Nevada
+80                  Alaska-Washington-Hawaii
+81                  New Hampshire-Maine-Vermont-Rhode Island
+83                  South Carolina-Georgia
+84                  Kentucky-Tennessee
+85                  Arkansas-Louisiana-Oklahoma
+87                  Iowa-N Dakota-S Dakota-Nebraska-Kansas-Minnesota-Missouri
+88                  Washington-Oregon-Alaska-Hawaii
+89                  Montana-Wyoming-Colorado-New Mexico-Utah-Nevada-Arizona
+90                  Delaware-Maryland-Virginia-West Virginia
+99                  State not identified
+
+METRO               Metropolitan central city status
+0                   Not identifiable
+1                   Not in metro area
+                    In metro area
+2                   Central city
+3                   Outside central city
+4                   Central city status unknown
+9                   Missing/Unknown
+
+FAMINC              Family income of householder
+100                 Under $5,000
+110                 Under $1,000
+111                 Under $500
+112                 $500 - 999
+120                 $1,000 - 1,999
+121                 $1,000 - 1,499
+122                 $1,500-1,999
+130                 $2,000 - 2,999
+131                 $2,000 - 2,499
+132                 $2,500 - 2,999
+140                 $3,000 - 3,999
+141                 $3,000 - 3,499
+142                 $3,500 - 3,999
+150                 $4,000 - 4,999
+200                 $5,000 - 7,999
+210                 $5,000 - 7,499
+220                 $5,000 - 5,999
+230                 $6,000 - 7,999
+231                 $6,000 - 7,499
+232                 $6,000 - 6,999
+233                 $7,000 - 7,499
+234                 $7,000 - 7,999
+300                 $7,500 - 9,999
+310                 $7,500 - 7,999
+320                 $8,000 - 8,499
+330                 $8,500 - 8,999
+340                 $8,000 - 8,999
+350                 $9,000 - 9,999
+400                 $10,000 - 14,999
+410                 $10,000 - 10,999
+420                 $11,000 - 11,999
+430                 $10,000 - 12,499
+440                 $10,000 - 11,999
+450                 $12,000 - 12,999
+460                 $12,000 - 14,999
+470                 $12,500 - 14,999
+480                 $13,000 - 13,999
+490                 $14,000 - 14,999
+500                 $15,000 - 19,999
+510                 $15,000 - 15,999
+520                 $16,000 - 16,999
+530                 $17,000 - 17,999
+540                 $15,000 - 17,499
+550                 $17,500 - 19,999
+560                 $18,000 - 19,999
+600                 $20,000 - 24,999
+700                 $25,000 - 49,999
+710                 $25,000 - 29,999
+720                 $30,000 - 34,999
+730                 $35,000 - 39,999
+740                 $40,000 - 49,999
+800                 $50,000 and over
+810                 $50,000 - 74,999
+820                 $50,000 - 59,999
+830                 $60,000 - 74,999
+840                 $75,000 and over
+841                 $75,000 - 99,999
+842                 $100,000 - 149,999
+843                 $150,000 and over
+995                 Missing
+996                 Refused
+997                 Don't know
+999                 Blank
+
+AGE                 Age
+00                  Under 1 year
+01                  1
+02                  2
+03                  3
+04                  4
+05                  5
+06                  6
+07                  7
+08                  8
+09                  9
+10                  10
+11                  11
+12                  12
+13                  13
+14                  14
+15                  15
+16                  16
+17                  17
+18                  18
+19                  19
+20                  20
+21                  21
+22                  22
+23                  23
+24                  24
+25                  25
+26                  26
+27                  27
+28                  28
+29                  29
+30                  30
+31                  31
+32                  32
+33                  33
+34                  34
+35                  35
+36                  36
+37                  37
+38                  38
+39                  39
+40                  40
+41                  41
+42                  42
+43                  43
+44                  44
+45                  45
+46                  46
+47                  47
+48                  48
+49                  49
+50                  50
+51                  51
+52                  52
+53                  53
+54                  54
+55                  55
+56                  56
+57                  57
+58                  58
+59                  59
+60                  60
+61                  61
+62                  62
+63                  63
+64                  64
+65                  65
+66                  66
+67                  67
+68                  68
+69                  69
+70                  70
+71                  71
+72                  72
+73                  73
+74                  74
+75                  75
+76                  76
+77                  77
+78                  78
+79                  79
+80                  80
+81                  81
+82                  82
+83                  83
+84                  84
+85                  85
+86                  86
+87                  87
+88                  88
+89                  89
+90                  90 (90+, 1988-2002)
+91                  91
+92                  92
+93                  93
+94                  94
+95                  95
+96                  96
+97                  97
+98                  98
+99                  99+
+
+SEX                 Sex
+1                   Male
+2                   Female
+9                   NIU
+
+RACE                Race
+100                 White
+200                 Black
+300                 American Indian/Aleut/Eskimo
+650                 Asian or Pacific Islander
+651                 Asian only
+652                 Hawaiian/Pacific Islander only
+700                 Other (single) race, n.e.c.
+                    Two or more races
+801                 White-Black
+802                 White-American Indian
+803                 White-Asian
+804                 White-Hawaiian/Pacific Islander
+805                 Black-American Indian
+806                 Black-Asian
+807                 Black-Hawaiian/Pacific Islander
+808                 American Indian-Asian
+809                 Asian-Hawaiian/Pacific Islander
+810                 White-Black-American Indian
+811                 White-Black-Asian
+812                 White-American Indian-Asian
+813                 White-Asian-Hawaiian/Pacific Islander
+814                 White-Black-American Indian-Asian
+815                 American Indian-Hawaiian/Pacific Islander
+816                 White-Black--Hawaiian/Pacific Islander
+817                 White-American Indian-Hawaiian/Pacific Islander
+818                 Black-American Indian-Asian
+819                 White-American Indian-Asian-Hawaiian/Pacific Islander
+820                 Two or three races, unspecified
+830                 Four or five races, unspecified
+999                 Blank
+
+MARST               Marital status
+1                   Married, spouse present
+2                   Married, spouse absent
+3                   Separated
+4                   Divorced
+5                   Widowed
+6                   Never married/single
+7                   Widowed or Divorced
+9                   NIU
+
+POPSTAT             Adult civilian, armed forces, or child
+1                   Adult civilian
+2                   Armed Forces
+3                   Child
+
+VETSTAT             Veteran status
+0                   NIU
+1                   No service
+2                   Yes
+9                   Unknown
+
+BPL                 Birthplace
+                    UNITED STATES
+09900               United States, n.s.
+                    US OUTLYING AREAS/TERRITORIES
+10000               American Samoa
+10500               Guam
+10750               Northern Mariana Islands
+11000               Puerto Rico
+11500               U.S. Virgin Islands
+12090               U.S. outlying areas, n.s.
+                    OTHER NORTH AMERICA
+15000               Canada
+16010               Bermuda
+19900               North America, n.s.
+                    CENTRAL AMERICA
+20000               Mexico
+21010               Belize/British Honduras
+21020               Costa Rica
+21030               El Salvador
+21040               Guatemala
+21050               Honduras
+21060               Nicaragua
+21070               Panama
+21090               Central America, n.s.
+                    CARIBBEAN
+25000               Cuba
+26010               Dominican Republic
+26020               Haiti
+26030               Jamaica
+26043               Bahamas
+26044               Barbados
+26054               Dominica
+26055               Grenada
+26060               Trinidad and Tobago
+26065               Antigua and Barbuda
+26070               St. Kitts--Nevis
+26075               St. Lucia
+26080               St. Vincent and the Grenadi
+26091               Caribbean, n.s.
+                    SOUTH AMERICA
+30005               Argentina
+30010               Bolivia
+30015               Brazil
+30020               Chile
+30025               Colombia
+30030               Ecuador
+30040               Guyana/British Guiana
+30050               Peru
+30060               Uruguay
+30065               Venezuela
+30070               Paraguay
+30090               South America, n.s.
+31000               Americas, n.s.
+                    EUROPE
+                    Northern Europe
+40000               Denmark
+40100               Finland
+40200               Iceland
+40400               Norway
+40500               Sweden
+                    United Kingdom and Ireland:
+41000               England
+41100               Scotland
+41200               Wales
+41300               United Kingdom, n.s.
+41400               Ireland
+41410               Northern Ireland
+                    Western Europe
+42000               Belgium
+42100               France
+42500               Netherlands
+42600               Switzerland
+                    Southern Europe
+43300               Greece
+43400               Italy
+43600               Portugal
+43610               Azores
+43800               Spain
+                    Central/Eastern Europe
+45000               Austria
+45200               Czechoslavakia
+45212               Slovakia
+45213               Czech Republic
+45300               Germany
+45400               Hungary
+45500               Poland
+45600               Romania
+45650               Bulgaria
+45675               Albania
+45700               Yugoslavia
+45720               Bosnia and Herzegovina
+45730               Croatia
+45740               Macedonia
+45750               Serbia
+45760               Kosovo
+45770               Montenego
+                    Russian Empire:
+                    Baltic States:
+46100               Estonia
+46200               Latvia
+46300               Lithuania
+46500               Other USSR/Russia
+46530               Ukraine
+46535               Belarus
+46540               Moldova
+46590               USSR, n.s.
+49900               Europe, n.s.
+                    ASIA
+                    East Asia:
+50000               China
+50010               Hong Kong
+50040               Taiwan
+50100               Japan
+50200               Korea
+50220               South Korea
+50300               Mongolia
+                    Southeast Asia
+51100               Cambodia
+51200               Indonesia
+51300               Laos
+51400               Malaysia
+51500               Philippines
+51600               Singapore
+51700               Thailand
+51800               Vietnam
+                    India/Southwest Asia:
+52000               Afghanistan
+52100               India
+52110               Bangladesh
+52120               Bhutan
+52130               Burma
+52140               Pakistan
+52150               Sri Lanka
+52200               Nepal
+                    Eurasia:
+55100               Armenia
+55200               Azerbaijan
+55300               Georgia
+                    Central Asia:
+55400               Uzbekistan
+55500               Kazakhstan
+                    Middle East/Asia Minor:
+53000               Iran
+53200               Iraq
+53400               Israel
+53420               Palestine
+53500               Jordan
+53700               Lebanon
+54000               Saudi Arabia
+54100               Syria
+54200               Turkey
+54300               Cyprus
+54350               Kuwait
+54400               Yemen
+54500               United Arab Emirates
+54700               Middle East, n.s.
+59900               Asia, n.e.c./n.s.
+                    AFRICA
+60010               Northern Africa
+60012               Egypt/United Arab Rep.
+60014               Morocco
+60016               Algeria
+60018               Sudan
+60019               Libya
+                    West Africa:
+60023               Ghana
+60031               Nigeria
+60032               Cameroon
+60033               Cape Verde
+60034               Liberia
+60035               Senegal
+60036               Sierra Leone
+60037               Guinea
+60038               Ivory Coast
+60039               Togo
+                    East Africa:
+60040               Eritrea
+60044               Ethiopia
+60045               Kenya
+60050               Somalia
+60060               Tanzania
+60065               Uganda
+60070               Zimbabwe
+60094               South Africa (Union of)
+                    Central Africa:
+60095               Zaire
+60096               Congo
+60097               Zambia
+60099               Africa, n.s./n.e.c.
+                    OCEANIA
+                    Australia and New Zealand
+70010               Australia
+70020               New Zealand
+71000               Pacific Islands
+71021               Fiji
+71022               Tonga
+71023               Samoa
+71024               Marshall Islands
+72000               Micronesia
+96000               Other, n.e.c. and unknown
+99999               NIU
+
+YRIMMIG             Year of immigration
+0000                NIU
+1949                1949 or earlier
+1959                1950-1959
+1964                1960-1964
+1969                1965-1969
+1974                1970-1974
+1979                1975-1979
+1981                1980-1981
+1983                1982-1983
+1985                1984-1985
+1987                1986-1987
+1989                1988-1989
+1991                1990-1991
+1993                1992-1993
+1994                1992-1994
+1995                1994-1995
+1996                1994-1996
+1997                1996-1997
+1998                1996-1998 (2000 CPS: 1998)
+1999                1998-1999 (1999 CPS: 1996-1999)
+2000                1998-2000
+2001                2000-2001 (2001 CPS: 1998-2001)
+2002                2000-2002
+2003                2002-2003 (2003 CPS: 2000-2003)
+2004                2002-2004
+2005                2004-2005 (2005 CPS: 2002-2005)
+2006                2004-2006
+2007                2004-2007
+2008                2006-2008 (2006-2007 CPS: 2004-2008)
+2009                2006-2009 (2012 CPS forward: 2008-2009)
+2010                2008-2010
+2011                2008-2011 (2014 CPS forward: 2010-2011)
+2012                2010-2012
+2013                2010-2013 (2016 CPS forward: 2012-2013)
+2014                2012-2014
+2015                2012-2015 (2018 CPS forward: 2014-2015)
+2016                2014-2016
+2017                2014-2017 (2019 CPS forward: 2016-2017)
+2018                2016-2018
+2019                2016-2019
+2020                2018-2020
+2021                2018-2021 (2022 CPS forward: 2018-2019)
+2022                2020-2022
+
+CITIZEN             Citizenship status
+1                   Born in U.S
+2                   Born in U.S. outlying
+3                   Born abroad of American parents
+4                   Naturalized citizen
+5                   Not a citizen
+9                   NIU
+
+MBPL                Mother's birthplace 
+                    UNITED STATES
+09900               U.S., n.s.
+                    US OUTLYING AREAS/TERRITORIES
+10000               American Samoa
+10500               Guam
+11000               Puerto Rico
+11500               U.S. Virgin Islands
+12090               U.S. outlying areas, n.s.
+                    OTHER NORTH AMERICA
+15000               Canada
+16010               Bermuda
+10750               Northern Mariana Islands
+19900               North America, n.s.
+                    CENTRAL AMERICA AND CARIBBEAN
+20000               Mexico
+21010               Belize/British Honduras
+21020               Costa Rica
+21030               El Salvador
+21040               Guatemala
+21050               Honduras
+21060               Nicaragua
+21070               Panama
+21090               Central America, n.s.
+                    Caribbean:
+25000               Cuba
+26000               West Indies
+26010               Dominican Republic
+26020               Haiti
+26030               Jamaica
+26043               Bahamas
+26044               Barbados
+26054               Dominica
+26055               Grenada
+26060               Trinidad and Tobago
+26065               Antigua and Barbuda
+26070               St. Kitts--Nevis
+26075               St. Lucia
+26080               St. Vincent and the Grenadi
+30000               South America
+30005               Argentina
+30010               Bolivia
+30015               Brazil
+30020               Chile
+30025               Colombia
+30030               Ecuador
+30040               Guyana/British Guiana
+30050               Peru
+30060               Uruguay
+30065               Venezuala
+30070               Paraguay
+31000               Americas, n.s.
+                    EUROPE
+                    Northern Europe:
+40000               Denmark
+40100               Finland
+40200               Iceland
+40400               Norway
+40500               Sweden
+                    United Kingdom and Ireland
+41000               England
+41100               Scotland
+41200               Wales
+41300               United Kingdom, n.s.
+41400               Ireland
+41410               Northern Ireland
+                    Western Europe:
+42000               Belgium
+42100               France
+42500               Netherlands
+42600               Switzerland
+                    Southern Europe:
+43300               Greece
+43400               Italy
+43600               Portugal
+43610               Azores
+43800               Spain
+                    Central/Eastern Europe:
+45000               Austria
+45200               Czechoslavakia
+45212               Slovakia
+45213               Czech Republic
+45300               Germany
+45400               Hungary
+45500               Poland
+45600               Romania
+45650               Bulgaria
+45675               Albania
+45700               Yugoslavia
+45720               Bosnia and Herzegovina
+45730               Croatia
+45740               Macedonia
+45750               Serbia
+45760               Kosovo
+45770               Montenego
+                    Russian Empire:
+                    Baltic States:
+46100               Estonia
+46200               Latvia
+46300               Lithuania
+46500               Other USSR/Russia
+46530               Ukraine
+46535               Belarus
+46540               Moldova
+46590               USSR, n.s.
+49900               Europe, n.s.
+                    ASIA
+                    East Asia:
+50000               China
+50010               Hong Kong
+50040               Taiwan
+50100               Japan
+50200               Korea
+50220               South Korea
+50300               Mongolia
+                    Southeast Asia:
+51100               Cambodia
+51200               Indonesia
+51300               Laos
+51400               Malaysia
+51500               Philippines
+51600               Singapore
+51700               Thailand
+51800               Vietnam
+                    India/Southwest Asia:
+52000               Afghanistan
+52100               India
+52110               Bangladesh
+52120               Bhutan
+52130               Burma (Myanmar)
+52140               Pakistan
+52150               Sri Lanka
+52200               Nepal
+                    Eurasia:
+55100               Armenia
+55200               Azerbaijan
+55300               Georgia
+                    Central Asia:
+55400               Uzbekistan
+55500               Kazakhstan
+                    Middle East/Asia Minor:
+53000               Iran
+53200               Iraq
+53400               Israel
+53420               Palestine
+53500               Jordan
+53700               Lebanon
+54000               Saudi Arabia
+54100               Syria
+54200               Turkey
+54300               Cyprus
+54350               Kuwait
+54400               Yemen
+54500               United Arab Emirates
+54700               Middle East, n.s.
+59900               Asia, n.e.c, /n.s.
+60000               Africa
+60010               Northern Africa
+60012               Egypt/United Arab Rep.
+60014               Morocco
+60016               Algeria
+60018               Sudan
+60019               Libya
+                    West Africa:
+60023               Ghana
+60031               Nigeria
+60032               Cameroon
+60033               Cape Verde
+60034               Liberia
+60035               Sengal
+60036               Sierra Leone
+60037               Guinea
+60038               Ivory Coast
+60039               Togo
+                    East Africa:
+60040               Eritrea
+60044               Ethiopia
+60045               Kenya
+60050               Somalia
+60060               Tanzania
+60065               Uganda
+60070               Zimbabwe
+                    Central Africa:
+60095               Zaire
+60096               Congo
+60097               Zambia
+                    Southern Africa
+60094               South Africa (Union of)
+                    OCEANIA
+                    Australia and New Zealand
+70010               Australia
+70020               New Zealand
+71000               Pacific Islands
+71021               Fiji
+71022               Tonga
+71023               Samoa
+71024               Marshall Islands
+72000               Micronesia
+                    ABROAD (unknown) or at sea
+                    Other unknowns:
+96000               Other, n.e.c. and unknown
+99999               NIU
+
+FBPL                Father's birthplace
+                    UNITED STATES
+09900               U.S., n.s.
+                    US OUTLYING AREAS/TERRITORIES
+10000               American Samoa
+10500               Guam
+10750               Northern Mariana Islands
+11000               Puerto Rico
+11500               U.S. Virgin Islands
+12090               U.S. outlying areas, n.s.
+                    OTHER NORTH AMERICA
+15000               Canada
+16010               Bermuda
+19900               North America, n.s.
+                    CENTRAL AMERICA AND CARIBBEAN
+20000               Mexico
+21010               Belize/British Honduras
+21020               Costa Rica
+21030               El Salvador
+21040               Guatemala
+21050               Honduras
+21060               Nicaragua
+21070               Panama
+21090               Central America, n.s.
+                    Caribbean:
+25000               Cuba
+26000               West Indies
+26010               Dominican Republic
+26020               Haiti
+26030               Jamaica
+26043               Bahamas
+26044               Barbados
+26054               Dominica
+26055               Grenada
+26060               Trinidad and Tobago
+26065               Antigua and Barbuda
+26070               St. Kitts--Nevis
+26075               St. Lucia
+26080               St. Vincent and the Grenadi
+26091               Caribbean, n.s.
+30000               South America
+30005               Argentina
+30010               Bolivia
+30015               Brazil
+30020               Chile
+30025               Colombia
+30030               Ecuador
+30040               Guyana/British Guiana
+30050               Peru
+30060               Uruguay
+30065               Venezuala
+30070               Paraguay
+31000               Americas, n.s.
+                    EUROPE
+                    Northern Europe:
+40000               Denmark
+40100               Finland
+40200               Iceland
+40400               Norway
+40500               Sweden
+                    United Kingdom and Ireland
+41000               England
+41100               Scotland
+41200               Wales
+41300               United Kingdom, n.s.
+41400               Ireland
+41410               Northern Ireland
+                    Western Europe:
+42000               Belgium
+42100               France
+42500               Netherlands
+42600               Switzerland
+                    Southern Europe:
+43300               Greece
+43400               Italy
+43600               Portugal
+43610               Azores
+43800               Spain
+                    Central/Eastern Europe:
+45000               Austria
+45200               Czechoslavakia
+45212               Slovakia
+45213               Czech Republic
+45300               Germany
+45400               Hungary
+45500               Poland
+45600               Romania
+45650               Bulgaria
+45675               Albania
+45700               Yugoslavia
+45720               Bosnia and Herzegovina
+45730               Croatia
+45740               Macedonia
+45750               Serbia
+45760               Kosovo
+45770               Montenegro
+                    Russian Empire:
+                    Baltic States:
+46100               Estonia
+46200               Latvia
+46300               Lithuania
+46500               Other USSR/Russia
+46530               Ukraine
+46535               Belarus
+46540               Moldova
+46590               USSR, n.s.
+49900               Europe, n.s.
+                    ASIA
+                    East Asia:
+50000               China
+50010               Hong Kong
+50040               Taiwan
+50100               Japan
+50200               Korea
+50220               South Korea
+50300               Mongolia
+                    Southeast Asia:
+51100               Cambodia
+51200               Indonesia
+51300               Laos
+51400               Malaysia
+51500               Philippines
+51600               Singapore
+51700               Thailand
+51800               Vietnam
+                    India/Southwest Asia:
+52000               Afghanistan
+52100               India
+52110               Bangladesh
+52120               Bhutan
+52130               Burma (Myanmar)
+52140               Pakistan
+52150               Sri Lanka
+52200               Nepal
+                    Eurasia:
+55100               Armenia
+55200               Azerbaijan
+55300               Georgia
+                    Central Asia:
+55400               Uzbekistan
+55500               Kazakhstan
+                    Middle East/Asia Minor:
+53000               Iran
+53200               Iraq
+53400               Israel
+53420               Palestine
+53500               Jordan
+53700               Lebanon
+54000               Saudi Arabia
+54100               Syria
+54200               Turkey
+54300               Cyprus
+54350               Kuwait
+54400               Yemen
+54500               United Arab Emirates
+54700               Middle East, n.s.
+59900               Asia, n.e.c, /n.s.
+60000               Africa
+60010               Northern Africa
+60012               Egypt/United Arab Rep.
+60014               Morocco
+60016               Algeria
+60018               Sudan
+60019               Libya
+                    West Africa:
+60023               Ghana
+60031               Nigeria
+60032               Cameroon
+60033               Cape Verde
+60034               Liberia
+60035               Sengal
+60036               Sierra Leone
+60037               Guinea
+60038               Ivory Coast
+60039               Togo
+                    East Africa:
+60040               Eritrea
+60044               Ethiopia
+60045               Kenya
+60050               Somalia
+60060               Tanzania
+60065               Uganda
+60070               Zimbabwe
+                    Southern Africa
+60094               South Africa (Union of)
+                    Central Africa:
+60095               Zaire
+60096               Congo
+60097               Zambia
+60099               Africa, n.s./n.e.c.
+                    OCEANIA
+                    Australia and New Zealand
+70010               Australia
+70020               New Zealand
+71000               Pacific Islands
+71021               Fiji
+71022               Tonga
+71023               Samoa
+71024               Marshall Islands
+72000               Micronesia
+                    ABROAD (unknown) or at sea
+                    Other unknowns:
+96000               Other, n.e.c. and unknown
+99999               NIU
+
+NATIVITY            Foreign birthplace or parentage
+0                   Unknown
+                    Native-Born
+1                   Both parents native-born
+2                   Father foreign, mother native
+3                   Mother foreign, father native
+4                   Both parents foreign
+5                   Foreign born
+
+HISPAN              Hispanic origin
+000                 Not Hispanic
+100                 Mexican
+102                 Mexican American
+103                 Mexicano/Mexicana
+104                 Chicano/Chicana
+108                 Mexican (Mexicano)
+109                 Mexicano/Chicano
+200                 Puerto Rican
+300                 Cuban
+400                 Dominican
+500                 Salvadoran
+                    Other Spanish:
+600                 Other Hispanic
+610                 Central/South American
+611                 Central American, (excluding Salvadoran)
+612                 South American
+901                 Do not know
+902                 N/A (and no response 1985-87)
+
+EMPSTAT             Employment status
+00                  NIU
+01                  Armed Forces
+                    In Labor Force
+                    Employed
+10                  At work
+12                  Has job, not at work last week
+20                  Unemployed
+21                  Unemployed, experienced worker
+22                  Unemployed, new worker
+30                  Not in labor force
+31                  NILF, housework
+32                  NILF, unable to work
+33                  NILF, school
+34                  NILF, other
+35                  NILF, unpaid, lt 15 hours
+36                  NILF, retired
+
+CLASSWKR            Class of worker 
+00                  NIU
+10                  Self-employed
+13                  Self-employed, not incorporated
+14                  Self-employed, incorporated
+20                  Works for wages or salary
+21                  Wage/salary, private
+22                  Private, for profit
+23                  Private, nonprofit
+24                  Wage/salary, government
+25                  Federal government employee
+26                  Armed forces
+27                  State government employee
+28                  Local government employee
+29                  Unpaid family worker
+99                  Missing/Unknown
+
+UHRSWORKT           Hours usually worked per week at all jobs
+997                 Hours vary
+999                 NIU
+
+WHYABSNT            Reason for absence from work
+00                  NIU
+01                  On temporary layoff (under 30 days)
+02                  On indefinite layoff (30+ days)
+03                  Slack work/business conditions
+04                  Waiting for a new job to begin
+05                  Vacation/personal days
+06                  Own illness/injury/medical problems
+07                  Child care problems
+08                  Other family/personal obligation
+09                  Maternity/paternity leave
+10                  Labor dispute
+11                  Weather affected job
+12                  School/training
+13                  Civic/military duty
+14                  Does not work in the business
+15                  Other
+
+WKSTAT              Full or part time status
+10                  Full-time schedules
+11                  Full-time hours (35+), usually full-time
+12                  Part-time for non-economic reasons, usually full-time
+13                  Not at work, usually full-time
+14                  Full-time hours, usually part-time for economic reasons
+15                  Full-time hours, usually part-time for non-economic reasons
+20                  Part-time for economic reasons
+21                  Part-time for economic reasons, usually full-time
+22                  Part-time hours, usually part-time for economic reasons
+40                  Part-time for non-economic reasons, usually part-time
+41                  Part-time hours, usually part-time for non-economic reasons
+42                  Not at work, usually part-time
+50                  Unemployed, seeking full-time work
+60                  Unemployed, seeking part-time work
+99                  NIU, blank, or not in labor force
+
+NUMJOB              How many jobs had in past week
+2                   2 jobs
+3                   3 jobs
+4                   4 or more jobs
+0                   NIU
+
+EDUC                Educational attainment recode
+000                 NIU or no schooling
+001                 NIU or blank
+002                 None or preschool
+010                 Grades 1, 2, 3, or 4
+011                 Grade 1
+012                 Grade 2
+013                 Grade 3
+014                 Grade 4
+020                 Grades 5 or 6
+021                 Grade 5
+022                 Grade 6
+030                 Grades 7 or 8
+031                 Grade 7
+032                 Grade 8
+040                 Grade 9
+050                 Grade 10
+060                 Grade 11
+070                 Grade 12
+071                 12th grade, no diploma
+072                 12th grade, diploma unclear
+073                 High school diploma or equivalent
+080                 1 year of college
+081                 Some college but no degree
+090                 2 years of college
+091                 Associate's degree, occupational/vocational program
+092                 Associate's degree, academic program
+100                 3 years of college
+110                 4 years of college
+111                 Bachelor's degree
+120                 5+ years of college
+121                 5 years of college
+122                 6+ years of college
+123                 Master's degree
+124                 Professional school degree
+125                 Doctorate degree
+999                 Missing/Unknown
+
+DIFFANY             Any difficulty
+0                   NIU
+1                   No difficulty
+2                   Has difficulty
+
+PAIDHOUR            Paid by the hour
+0                   NIU
+1                   No
+2                   Yes
+6                   Refused
+7                   Don't Know
+
+UNION               Union membership
+0                   NIU
+1                   No union coverage
+2                   Member of labor union
+3                   Covered by union but not a member
+
+COVIDTELEW          Worked remotely for pay due to COVID-19 pandemic
+01                  No
+02                  Yes
+99                  NIU
+
+COVIDUNAW           Unable to work due to COVID-19 pandemic
+01                  No
+02                  Yes
+99                  NIU
+
+COVIDPAID           Received pay for hours not worked due to the COVID-19 pandemic
+01                  No
+02                  Yes
+99                  NIU
+
+COVIDLOOK           Prevented from looking for work due to COVID-19 pandemic
+01                  No
+02                  Yes
+99                  NIU
+

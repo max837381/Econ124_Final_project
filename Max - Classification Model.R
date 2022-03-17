@@ -5,7 +5,7 @@
 ###################################################################################################
 #install.packages("ROCR")
 #install.packages("caret")
-install.packages("fastDummies")
+#install.packages("fastDummies")
 library(caret)
 library(fastDummies)
 # Importing the data from Tamar's R file
@@ -26,15 +26,15 @@ df$college <- ifelse(df$EDUC>=111,1,0)
 
 df <- df[df$AGE<66 & df$AGE=>21,]
 # Take out unnecessary variables
-#df <- subset(df, select = -c(SERIAL, HWTFINL, CPSID, PERNUM, WTFINL, CPSIDP, VETSTAT, BPL, COVIDLOOK, COVIDTELEW, COVIDUNAW, COVIDPAID, DIFFANY, EDUC, FBPL, MBPL))
+df <- subset(df, select = -c(SERIAL, HWTFINL, CPSID, PERNUM, WTFINL, CPSIDP, VETSTAT, BPL, COVIDLOOK, COVIDTELEW, COVIDUNAW, COVIDPAID, DIFFANY, EDUC, FBPL, MBPL, OCC, IND))
 # remove unnecessary variables
 #df <- subset(df, select = -c(2,4,5,6,7,8))
 
-df <- subset(df, select = -c(SERIAL, HWTFINL, CPSID, PERNUM, WTFINL, CPSIDP, BPL, FBPL, MBPL, EDUC, COVIDPAID, AGE))
+#df <- subset(df, select = -c(SERIAL, HWTFINL, CPSID, PERNUM, WTFINL, CPSIDP, BPL, FBPL, MBPL, EDUC, COVIDPAID, AGE))
 # colnames(df)!="AGE" & 
 
 is.factor(df$SEX)
-factor_columns <- colnames(df[colnames(df)!="YRIMMIG" & colnames(df)!="UHRSWORKT" & colnames(df)!="AHRSWORKT"])
+factor_columns <- colnames(df[colnames(df)!="YRIMMIG" & colnames(df)!="UHRSWORKT" & colnames(df)!="AHRSWORKT" & colnames(df)!="HOURWAGE" & colnames(df)!="EARNWEEK"])
 # Make the appropriate variables into factors
 for(i in factor_columns) {
   df[,i] <- factor(df[,i])}
@@ -69,11 +69,11 @@ mean(is.na(dec21))
 split = sort(sample(nrow(dec21), nrow(dec21)*.8))
 train <- dec21[split,]
 test <- dec21[-split,]
-logmodel <- glm(college ~ ., data=train, family = "binomial"(link="logit"))
-summary(logmodel)
+#logmodel <- glm(college ~ ., data=train, family = "binomial"(link="logit"))
+#summary(logmodel)
 ##################
 ## Evaluate our logit model IS (in sample)
-pred_logit1 <- predict(logmodel, newdata = train, type="response")
+#pred_logit1 <- predict(logmodel, newdata = train, type="response")
 
 Y <- train$college
 X <- train[colnames(train)!="college"]
