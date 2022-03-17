@@ -59,3 +59,4 @@ income_college_totals <- df %>%
 
 hist(as.numeric(df$incomegroup), main = "Histogram of Income Group",
      xlab="Income Group")
+
