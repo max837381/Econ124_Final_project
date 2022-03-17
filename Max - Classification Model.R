@@ -5,7 +5,9 @@
 ###################################################################################################
 #install.packages("ROCR")
 #install.packages("caret")
+install.packages("fastDummies")
 library(caret)
+library(fastDummies)
 # Importing the data from Tamar's R file
 rm(list = ls())
 library(ROCR)
