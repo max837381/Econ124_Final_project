@@ -13,7 +13,7 @@ rm(list = ls())
 library(ROCR)
 #source("Tamar - Descriptive Statistics.R")
 
-df <- read.csv("cps_00009.csv")
+df <- read.csv("cps_00010.csv")
 df$unemp <- ifelse(df$EMPSTAT>=20 & df$EMPSTAT<=22,1,0)
 df$college <- ifelse(df$EDUC>=111,1,0)
 
