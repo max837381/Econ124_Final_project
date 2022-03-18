@@ -10,13 +10,21 @@
 rm(list = ls())
 set.seed(124)
 library(caret)
+library(dplyr)
+library(tidyr)
 
-#source("Tamar - Descriptive Statistics.R")
-
+# Read in the data
 df <- read.csv("cps_00010.csv")
-df$unemp <- ifelse(df$EMPSTAT>=20 & df$EMPSTAT<=22,1,0)
+#df$unemp <- ifelse(df$EMPSTAT>=20 & df$EMPSTAT<=22,1,0)
 df$college <- ifelse(df$EDUC>=111,1,0)
-df <- df[df$RACE!=100 & df$RACE!=200,]
+
+## MINORITIES
+df <- df[df$RACE!=100,]
+
+# Remove single observations (will cause problems in training set and test set split)
+df <- df[df$CLASSWKR!=29,]
+df <- df[df$WKSTAT!=14,]
+df <- df[df$WHYABSNT!=10,]
 #df$unemp <- factor(df$unemp)
 #unemployed <- as.data.frame(df[df$unemp==1])
 #unemployed <- df[df$unemp==1,]
@@ -25,8 +33,18 @@ df <- df[df$RACE!=100 & df$RACE!=200,]
 college <- df[df$college==1,]
 
 df <- df[df$AGE>21,]
+
+#income grouping
+quantile(df$FAMINC, probs = c(0.25,0.5,0.75))
+df$lowerclass <- ifelse(df$FAMINC <= 730,1,0) #classifies someone as being lower class if their family income is less than or equal to $39,999
+df$lowermiddle <- ifelse(df$FAMINC >= 740 & df$FAMINC < 830,1,0) #classifies someone as being lower middle class if their family income is greater than or equal
+#to 40,000 and less than $60,000
+df$uppermiddle <- ifelse(df$FAMINC >= 830 & df$FAMINC < 842,1,0) #classifies someone as being upper middle class if their family income is greater than or equal 
+#to $60,000 and less than $100,000
+df$upperclass <- ifelse(df$FAMINC >= 842 & df$FAMINC != 999,1,0) #classifies someone as being upper class if their family income is greater than or equal to
+#$100,000
 # Take out unnecessary variables
-df <- subset(df, select = -c(SERIAL, HWTFINL, CPSID, PERNUM, WTFINL, CPSIDP, BPL, EDUC, FBPL, MBPL, OCC, EARNWEEK, HOURWAGE, PAIDHOUR, UNION))
+df <- subset(df, select = -c(SERIAL, HWTFINL, CPSID, PERNUM, WTFINL, CPSIDP, BPL, EDUC, FBPL, MBPL, OCC, EARNWEEK, HOURWAGE, PAIDHOUR, UNION, FAMINC))
 
 # Check if factor
 is.factor(df$SEX)
@@ -39,7 +57,7 @@ for(i in factor_columns) {
 is.factor(df$SEX)
 
 summary(df$RACE)
-df <- df[!(as.numeric(df$IND) %in% which(table(df$IND)<200)),]
+df <- df[!(as.numeric(df$IND) %in% which(table(df$IND)<40)),]
 df <- df[!(as.numeric(df$RACE) %in% which(table(df$RACE)<20)),]
 
 
@@ -67,10 +85,13 @@ mean(is.na(dec21))
 #dec21 <- dec21[, sapply(dec21, nlevels) > 1]
 
 # Split our data using 80/20 for the training set and test set
-split = sort(sample(nrow(dec21), nrow(dec21)*.8))
+split = sort(sample(nrow(dec21), nrow(dec21)*.7))
 train <- dec21[split,]
 test <- dec21[-split,]
-logmodel <- glm(college ~ STATEFIP + METRO + AGE + SEX + RACE + MARST + CITIZEN + EMPSTAT + CLASSWKR + WKSTAT + DIFFANY, data=train, family = "binomial"(link="logit"))
+
+# Logistic regression
+# STATEFIP + METRO + AGE + SEX + RACE + MARST + CITIZEN + EMPSTAT + CLASSWKR + WKSTAT + DIFFANY
+logmodel <- glm(college ~ ., data=train, family = "binomial"(link="logit"))
 summary(logmodel)
 coefs <- sort(coefficients(logmodel), decreasing = TRUE)
 coefs
@@ -84,10 +105,14 @@ Y_test <- test$college
 X <- train[colnames(train)!="college"]
 X_test <- test[colnames(test)!="college"]
 
+###################################################################################################
+### Part 2: In-sample Logit Predictions
+###################################################################################################
+
 # Use model developed on the training dataset
 # to make predictions on the test dataset.
-prd<- predict(logmodel, newdata = train, type = "response")
-
+prd<- predict(logmodel, train, type = "response")
+hist(prd, xlab = "Predicted Probabilities IS logit")
 # Flag predicted probabilities as 1/0
 prd_bin<-as.factor(ifelse(prd>0.5,1,0))
 
@@ -98,7 +123,7 @@ confusionMatrix(data = prd_bin,
 #confusionMatrix(train$college, predict(logmodel, test))
 
 # Setting seed and loading in the ROC.R
-set.seed(0)
+set.seed(124)
 source("roc.R")
 
 cutoff_points = c(0.02,0.1,0.33,0.4,0.5,0.6,0.8,0.9)
@@ -115,40 +140,44 @@ for (i in cutoff_points){
 
 legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="cutoffs")
 
+###################################################################################################
+### Part 3: Out-of-sample Logit Predictions
+###################################################################################################
+
 ### OOS Logit predictions
 
-prd<- predict(logmodel, newdata = test, type = "response")
-
+prd2<- predict(logmodel, test, type = "response")
+hist(prd2, xlab = "Predicted Probabilities OOS Logit")
 # Flag predicted probabilities as 1/0
-prd_bin<-as.factor(ifelse(prd>0.5,1,0))
+prd_bin2<-as.factor(ifelse(prd2>0.5,1,0))
 
 # use caret and compute a confusion matrix
 library(caret)
-confusionMatrix(data = prd_bin, 
+confusionMatrix(data = prd_bin2, 
                 reference = test$college)
 #confusionMatrix(train$college, predict(logmodel, test))
 
 # Setting seed and loading in the ROC.R
-set.seed(0)
+set.seed(124)
 source("roc.R")
 
 cutoff_points = c(0.02,0.1,0.33,0.4,0.5,0.6,0.8,0.9)
 cutoff_colors = c("blue","red","green","yellow","purple", "darkgreen", "brown", "pink")
 
-# IS curve
+# OOS Logit curve
 par(mai=c(.9,.9,.2,.1)) # format margins
-roc(prd, Y_test, bty="n", main="OOS ROC Logit") # from roc.R
+roc(prd2, Y_test, bty="n", main="OOS ROC Logit") # from roc.R
 
 # For loop to make my code more concise
 for (i in cutoff_points){
-  points(x=1-mean((prd<=i)[Y_test==0]), y=mean((prd>i)[Y_test==1]), cex=1.5, pch=20, col=cutoff_colors[match(i,cutoff_points)])
+  points(x=1-mean((prd2<=i)[Y_test==0]), y=mean((prd2>i)[Y_test==1]), cex=1.5, pch=20, col=cutoff_colors[match(i,cutoff_points)])
 }
 
 legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="cutoffs")
 
 
 ###################################################################################################
-### Part 2: k-fold CV model
+### Part 4: k-fold CV model
 ###################################################################################################
 
 
@@ -193,7 +222,7 @@ library(caret)
 confusionMatrix(data = prd_cv, 
                 reference = train$college)
 # Plotting the histogram of predicted probabilities
-hist(pred_CV, xlab = "Predicted Probabilities")
+hist(pred_CV, xlab = "Predicted Probabilities IS CV-Gamlr")
 
 #p <- 0.2
 #cat("proportion of positive classifications that are correct:", mean(Y[pred_CV>p] ), "\n")
@@ -202,7 +231,7 @@ hist(pred_CV, xlab = "Predicted Probabilities")
 
 
 # Setting seed and loading in the ROC.R
-set.seed(0)
+set.seed(124)
 source("roc.R")
 
 cutoff_points = c(0.02,0.1,0.33,0.4,0.5,0.6,0.8,0.9)
@@ -210,7 +239,7 @@ cutoff_colors = c("blue","red","green","yellow","purple", "darkgreen", "brown", 
 
 # IS curve
 par(mai=c(.9,.9,.2,.1)) # format margins
-roc(pred_CV, Y, bty="n", main="IS ROC") # from roc.R
+roc(pred_CV, Y, bty="n", main="IS ROC CV") # from roc.R
 
 # For loop to make my code more concise
 for (i in cutoff_points){
@@ -220,11 +249,11 @@ for (i in cutoff_points){
 legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="cutoffs")
 
 # refit the model using test data
-set.seed(0)
+set.seed(124)
 pred_oos <- drop(predict(cross_validation, select='min', X_test, type="response"))
 Y_oos <- Y_test
 
-roc(pred_oos, Y_oos, bty="n", main="OOS ROC")
+roc(pred_oos, Y_oos, bty="n", main="OOS ROC CV")
 
 for (i in cutoff_points){
   points(x=1-mean((pred_oos<=i)[Y_oos==0]), y=mean((pred_oos>i)[Y_oos==1]), cex=1.5, pch=20, col=cutoff_colors[match(i,cutoff_points)])
@@ -246,6 +275,47 @@ prd_cv2<-as.factor(ifelse(pred_CV2>0.5,1,0))
 library(caret)
 confusionMatrix(data = prd_cv2, 
                 reference = test$college)
+
+#########
+## Evaluate using january data
+#########
+
+
+# Make sure there is the same number of X's so we will randomly drop some observations from jan22 data frame
+
+
+# refit the model using test data
+set.seed(124)
+Y_jan <- jan22$college
+X_jan <- jan22[colnames(test)!="college"]
+X_jan <- sparse.model.matrix(~ .^2, data=X_jan)[,-1]
+sample_split <- sample.int(nrow(jan22),nrow(train))
+pred_oos <- drop(predict(cross_validation, select='min', X_jan[sample_split,], type="response"))
+Y_oos <- Y_jan
+
+roc(pred_oos, Y_oos, bty="n", main="OOS ROC January 2022 Data")
+
+for (i in cutoff_points){
+  points(x=1-mean((pred_oos<=i)[Y_oos==0]), y=mean((pred_oos>i)[Y_oos==1]), cex=1.5, pch=20, col=cutoff_colors[match(i,cutoff_points)])
+}
+# p = 0.2
+#points(x=1-mean((pred_oos<.2)[Y_oos==0]), y=mean((pred_oos>.2)[Y_oos==1]), cex=1.5, pch=20, col='red') 
+# p = 0.5
+#points(x=1-mean((pred_oos<.5)[Y_oos==0]), y=mean((pred_oos>.5)[Y_oos==1]), cex=1.5, pch=20, col='blue') 
+legend("bottomright",fill=cutoff_colors, legend=cutoff_points,bty="n",title="cutoffs")
+
+
+# Computing the predicted probabilities
+pred_CV3 <- drop(predict(cross_validation, select='min', X_jan, type="response"))
+
+# Flag predicted probabilities as 1/0
+prd_cv3<-as.factor(ifelse(pred_CV3>0.5,1,0))
+
+# use caret and compute a confusion matrix
+library(caret)
+confusionMatrix(data = prd_cv3, 
+                reference = jan22$college)
+
 
 
 
