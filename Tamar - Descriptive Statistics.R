@@ -1,6 +1,7 @@
 # Tamar - descriptive statistics and tables
 #do it for education, race, and gender
 #regression and then scatter plot
+rm(list = ls())
 library(dplyr)
 library(tidyr)
 library(ggplot2)
