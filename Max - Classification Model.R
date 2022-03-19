@@ -438,7 +438,7 @@ ROC_rf_auc <- auc(ROC_rf)
 plot(ROC_rf, col = "green", main = "ROC For Random Forest (GREEN)")
 lines(ROC_lr, col = "red")
 
-random_forest <- ranger(college ~ ., data = train, write.forest = TRUE, num.tree = 300, min.node.size = 19, importance = "impurity", probability = TRUE, classification = TRUE)
+random_forest <- ranger(college ~ ., data = train, write.forest = TRUE, num.tree = 400, min.node.size = 1, importance = "impurity", probability = TRUE, classification = TRUE)
 
 probabilities_rf = predict(random_forest, data = train, type = "response")$predictions
 logit_dev(Y, probabilities_rf)
