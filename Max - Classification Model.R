@@ -5,17 +5,18 @@
 ###################################################################################################
 #install.packages("ROCR")
 #install.packages("caret")
+#install.packages("ranger")
 
 # Administrative cleanup
 # Clearing the environment, setting the seed and loading packages we will use in our project.
 rm(list = ls())
-graphics.off()
-dev.off(dev.list()["RStudioGD"]) # Apply dev.off() & dev.list()
+if(!is.null(dev.list())) dev.off()
 set.seed(124)
 library(caret)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+library(ranger)
 
 # Read in the data
 df <- read.csv("cps_00010.csv")
@@ -50,11 +51,11 @@ df$upperclass <- ifelse(df$FAMINC >= 842 & df$FAMINC != 999,1,0) #classifies som
 
 # BPL, FBPL, MBPL, OCC
 # Take out unnecessary variables
-df <- subset(df, select = -c(SERIAL, HWTFINL, CPSID, PERNUM, WTFINL, CPSIDP, EDUC, EARNWEEK, HOURWAGE, PAIDHOUR, UNION, FAMINC, BPL, MBPL, FBPL, OCC))
+df <- subset(df, select = -c(SERIAL, HWTFINL, CPSID, PERNUM, WTFINL, CPSIDP, EDUC, EARNWEEK, HOURWAGE, PAIDHOUR, UNION, FAMINC, BPL, MBPL, FBPL, OCC, IND))
 
 # Check if factor
 is.factor(df$SEX)
-factor_columns <- colnames(df[colnames(df)!="AGE" & colnames(df)!="YRIMMIG" & colnames(df)!="UHRSWORKT" & colnames(df)!="AHRSWORKT"])
+factor_columns <- colnames(df[colnames(df)!="AGE" & colnames(df)!="YRIMMIG" & colnames(df)!="college" &colnames(df)!="UHRSWORKT" & colnames(df)!="AHRSWORKT"])
 # Make the appropriate variables into factors
 for(i in factor_columns) {
   df[,i] <- factor(df[,i])}
@@ -63,7 +64,7 @@ for(i in factor_columns) {
 is.factor(df$SEX)
 
 summary(df$RACE)
-df <- df[!(as.numeric(df$IND) %in% which(table(df$IND)<40)),]
+#df <- df[!(as.numeric(df$IND) %in% which(table(df$IND)<40)),]
 df <- df[!(as.numeric(df$RACE) %in% which(table(df$RACE)<20)),]
 
 
@@ -102,8 +103,10 @@ test <- dec21[-split,]
 # STATEFIP + METRO + AGE + SEX + RACE + MARST + CITIZEN + EMPSTAT + CLASSWKR + WKSTAT + DIFFANY
 logmodel <- glm(college ~ ., data=train, family = "binomial")
 summary(logmodel)
+logLik(logmodel)
 coefs <- sort(coefficients(logmodel), decreasing = TRUE)
 coefs
+
 ##################
 ## Evaluate our logit model IS (in sample)
 #pred_logit1 <- predict(logmodel, newdata = train, type="response")
@@ -120,6 +123,10 @@ X_test <- test[colnames(test)!="college"]
 prd<- predict(logmodel, train, type = "response")
 #hist(prd, xlab = "Predicted Probabilities IS logit")
 
+logit_dev <- function(y, pred) {
+  return( -2*sum( y*log(pred) + (1-y)*log(1-pred) ) )
+}
+logit_dev(Y,prd)
 #####
 ## In-sample Linear Logit Model
 ####
@@ -173,7 +180,7 @@ legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="
 ###################################################################################################
 # Non-Linear Logistic regression
 # STATEFIP + METRO + AGE + SEX + RACE + MARST + CITIZEN + EMPSTAT + CLASSWKR + WKSTAT + DIFFANY
-logmodel_nonlinear <- glm(college ~ STATEFIP + METRO + (SEX + MARST + AGE + RACE)^2 + CITIZEN + EMPSTAT + CLASSWKR + WKSTAT + DIFFANY, data=train, family = "binomial")
+logmodel_nonlinear <- glm(college ~ STATEFIP + (SEX + RACE + EMPSTAT)^2 +., data=train, family = "binomial")
 summary(logmodel_nonlinear)
 coefs <- sort(coefficients(logmodel_nonlinear), decreasing = TRUE)
 coefs
@@ -221,7 +228,7 @@ legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="
 ## Out-of-sample Non-Linear Logit Model
 ####
 
-prd_logit_nonlinear_oos<- predict(logmodel_nonlinear, test, type = "response")
+prd_logit_nonlinear_oos<- predict(logmodel_nonlinear, newdata=test, type = "response")
 
 # Setting seed and loading in the ROC.R
 set.seed(124)
@@ -241,7 +248,7 @@ for (i in cutoff_points){
 
 legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="cutoffs")
 
-
+logit_dev(Y_test,prd2)
 ###################################################################################################
 ### Part 4: k-fold CV model
 ###################################################################################################
@@ -334,6 +341,9 @@ legend("bottomright",fill=cutoff_colors, legend=cutoff_points,bty="n",title="cut
 # Computing the predicted probabilities
 pred_CV2 <- drop(predict(cross_validation, select='min', X_test, type="response"))
 
+logit_dev(Y, pred_CV2)
+logit_dev(Y, pred_CV)
+logit_dev(Y_test, pred_oos)
 # Flag predicted probabilities as 1/0
 prd_cv2<-as.factor(ifelse(pred_CV2>0.5,1,0))
 
@@ -382,6 +392,91 @@ library(caret)
 confusionMatrix(data = prd_cv3, 
                 reference = jan22$college)
 
+###################################################################################################
+### Part 4: Random Forests model
+###################################################################################################
+#install.packages("randomForest")
+library(pROC)
+library(randomForest)
+#library("ranger")
+set.seed(124)
+Y_randomforest <- factor(train$college)
+X_randomforest <- train[colnames(train)!="college"]
+#train <- subset(train, select = -c(college))
+classifier_RF = randomForest(x = X_randomforest,
+                             y = Y_randomforest,
+                             ntree = 100)
 
+classifier_RF
+
+# Predicting the Test set results
+y_pred = predict(classifier_RF, newdata = test)
+
+# Confusion Matrix
+confusion_mtx = table(test[, 5], y_pred)
+confusion_mtx
+
+# Plotting model
+plot(classifier_RF)
+
+# Importance plot
+importance(classifier_RF)
+
+# Variable importance plot
+varImpPlot(classifier_RF)
+
+
+predictionsman <- predict(classifier_RF, train, type = "prob")
+prd_randomforest <- predictionsman[,2]
+logit_dev(Y,prd_randomforest)
+p <- as.numeric(prd_randomforest)
+rf_prediction <- predict(classifier_RF, test, type = "prob")
+rf_pred <- rf_prediction[,2]
+ROC_rf <- roc(test$college, rf_prediction[,2])
+ROC_lr <- roc(test$college, prd2)
+ROC_rf_auc <- auc(ROC_rf)
+plot(ROC_rf, col = "green", main = "ROC For Random Forest (GREEN)")
+lines(ROC_lr, col = "red")
+
+random_forest <- ranger(college ~ ., data = train, write.forest = TRUE, num.tree = 300, min.node.size = 19, importance = "impurity", probability = TRUE, classification = TRUE)
+
+probabilities_rf = predict(random_forest, data = train, type = "response")$predictions
+logit_dev(Y, probabilities_rf)
+logit_dev(Y, prd)
+hist(probabilities_rf)
+
+pred_rf_oos <- predict(random_forest, data = test, type = "response")$predictions
+logit_dev(Y_test, pred_rf_oos)
+barplot(sort(importance(random_forest), decreasing = TRUE), las = 2)
+plot(random_forest)
+rf <- ranger(college ~)
+#####
+## In-sample Non-Linear Logit Model
+####
+
+# Setting seed and loading in the ROC.R
+set.seed(124)
+source("roc.R")
+
+cutoff_points = c(0.02,0.1,0.33,0.4,0.5,0.6,0.8,0.9)
+cutoff_colors = c("blue","red","green","yellow","purple", "darkgreen", "brown", "pink")
+
+# IS curve
+par(mai=c(.9,.9,.2,.1)) # format margins
+roc(rf_pred, Y_test, bty="n", main="IS ROC Random Forest") # from roc.R
+
+# For loop to make my code more concise
+for (i in cutoff_points){
+  points(x=1-mean((rf_pred<=i)[Y_test==0]), y=mean((rf_pred>i)[Y_test==1]), cex=1.5, pch=20, col=cutoff_colors[match(i,cutoff_points)])
+}
+
+legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="cutoffs")
+
+
+########
+## No spec model
+#######
+no_specifications_random_forest <- ranger(college ~ ., data = train, write.forest = TRUE, importance = "impurity", probability = TRUE)
+no_specifications_probabilities_rf = predict(no_specifications_random_forest, data = train)$predictions
 
 
