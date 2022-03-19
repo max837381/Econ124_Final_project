@@ -1,17 +1,21 @@
 ## ECON 124 Final Project
 ## Anthony, Max, Tamar
 ###################################################################################################
-### Part 1: Setting up our initial logit model
+### Part 1: Setting up the data
 ###################################################################################################
 #install.packages("ROCR")
 #install.packages("caret")
 
-# Importing the data 
+# Administrative cleanup
+# Clearing the environment, setting the seed and loading packages we will use in our project.
 rm(list = ls())
+graphics.off()
+dev.off(dev.list()["RStudioGD"]) # Apply dev.off() & dev.list()
 set.seed(124)
 library(caret)
 library(dplyr)
 library(tidyr)
+library(ggplot2)
 
 # Read in the data
 df <- read.csv("cps_00010.csv")
@@ -43,8 +47,10 @@ df$uppermiddle <- ifelse(df$FAMINC >= 830 & df$FAMINC < 842,1,0) #classifies som
 #to $60,000 and less than $100,000
 df$upperclass <- ifelse(df$FAMINC >= 842 & df$FAMINC != 999,1,0) #classifies someone as being upper class if their family income is greater than or equal to
 #$100,000
+
+# BPL, FBPL, MBPL, OCC
 # Take out unnecessary variables
-df <- subset(df, select = -c(SERIAL, HWTFINL, CPSID, PERNUM, WTFINL, CPSIDP, BPL, EDUC, FBPL, MBPL, OCC, EARNWEEK, HOURWAGE, PAIDHOUR, UNION, FAMINC))
+df <- subset(df, select = -c(SERIAL, HWTFINL, CPSID, PERNUM, WTFINL, CPSIDP, EDUC, EARNWEEK, HOURWAGE, PAIDHOUR, UNION, FAMINC, BPL, MBPL, FBPL, OCC))
 
 # Check if factor
 is.factor(df$SEX)
@@ -84,14 +90,17 @@ sum(is.na(dec21))
 mean(is.na(dec21))
 #dec21 <- dec21[, sapply(dec21, nlevels) > 1]
 
-# Split our data using 80/20 for the training set and test set
+# Split our data using 70/30 for the training set and test set
 split = sort(sample(nrow(dec21), nrow(dec21)*.7))
 train <- dec21[split,]
 test <- dec21[-split,]
 
+###################################################################################################
+### Part 2: Initial Linear Logit Model
+###################################################################################################
 # Logistic regression
 # STATEFIP + METRO + AGE + SEX + RACE + MARST + CITIZEN + EMPSTAT + CLASSWKR + WKSTAT + DIFFANY
-logmodel <- glm(college ~ ., data=train, family = "binomial"(link="logit"))
+logmodel <- glm(college ~ ., data=train, family = "binomial")
 summary(logmodel)
 coefs <- sort(coefficients(logmodel), decreasing = TRUE)
 coefs
@@ -105,22 +114,15 @@ Y_test <- test$college
 X <- train[colnames(train)!="college"]
 X_test <- test[colnames(test)!="college"]
 
-###################################################################################################
-### Part 2: In-sample Logit Predictions
-###################################################################################################
 
 # Use model developed on the training dataset
 # to make predictions on the test dataset.
 prd<- predict(logmodel, train, type = "response")
-hist(prd, xlab = "Predicted Probabilities IS logit")
-# Flag predicted probabilities as 1/0
-prd_bin<-as.factor(ifelse(prd>0.5,1,0))
+#hist(prd, xlab = "Predicted Probabilities IS logit")
 
-# use caret and compute a confusion matrix
-library(caret)
-confusionMatrix(data = prd_bin, 
-                reference = train$college)
-#confusionMatrix(train$college, predict(logmodel, test))
+#####
+## In-sample Linear Logit Model
+####
 
 # Setting seed and loading in the ROC.R
 set.seed(124)
@@ -131,7 +133,7 @@ cutoff_colors = c("blue","red","green","yellow","purple", "darkgreen", "brown", 
 
 # IS curve
 par(mai=c(.9,.9,.2,.1)) # format margins
-roc(prd, Y, bty="n", main="IS ROC Logit") # from roc.R
+roc(prd, Y, bty="n", main="IS ROC Linear Logit") # from roc.R
 
 # For loop to make my code more concise
 for (i in cutoff_points){
@@ -140,22 +142,13 @@ for (i in cutoff_points){
 
 legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="cutoffs")
 
-###################################################################################################
-### Part 3: Out-of-sample Logit Predictions
-###################################################################################################
 
-### OOS Logit predictions
+
+#####
+## Out-of-sample Linear Logit Model
+####
 
 prd2<- predict(logmodel, test, type = "response")
-hist(prd2, xlab = "Predicted Probabilities OOS Logit")
-# Flag predicted probabilities as 1/0
-prd_bin2<-as.factor(ifelse(prd2>0.5,1,0))
-
-# use caret and compute a confusion matrix
-library(caret)
-confusionMatrix(data = prd_bin2, 
-                reference = test$college)
-#confusionMatrix(train$college, predict(logmodel, test))
 
 # Setting seed and loading in the ROC.R
 set.seed(124)
@@ -166,11 +159,84 @@ cutoff_colors = c("blue","red","green","yellow","purple", "darkgreen", "brown", 
 
 # OOS Logit curve
 par(mai=c(.9,.9,.2,.1)) # format margins
-roc(prd2, Y_test, bty="n", main="OOS ROC Logit") # from roc.R
+roc(prd2, Y_test, bty="n", main="OOS ROC Linear Logit") # from roc.R
 
 # For loop to make my code more concise
 for (i in cutoff_points){
   points(x=1-mean((prd2<=i)[Y_test==0]), y=mean((prd2>i)[Y_test==1]), cex=1.5, pch=20, col=cutoff_colors[match(i,cutoff_points)])
+}
+
+legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="cutoffs")
+
+###################################################################################################
+### Part 3: Non-Linear Logit Model
+###################################################################################################
+# Non-Linear Logistic regression
+# STATEFIP + METRO + AGE + SEX + RACE + MARST + CITIZEN + EMPSTAT + CLASSWKR + WKSTAT + DIFFANY
+logmodel_nonlinear <- glm(college ~ STATEFIP + METRO + (SEX + MARST + AGE + RACE)^2 + CITIZEN + EMPSTAT + CLASSWKR + WKSTAT + DIFFANY, data=train, family = "binomial")
+summary(logmodel_nonlinear)
+coefs <- sort(coefficients(logmodel_nonlinear), decreasing = TRUE)
+coefs
+##################
+## Evaluate our logit model IS (in sample)
+#pred_logit1 <- predict(logmodel, newdata = train, type="response")
+#pred_logit2 <- predict(logmodel, newdata = test, type="response")
+
+Y <- train$college
+Y_test <- test$college
+X <- train[colnames(train)!="college"]
+X_test <- test[colnames(test)!="college"]
+
+
+# Use model developed on the training dataset
+# to make predictions on the test dataset.
+prd_logit_nonlinear<- predict(logmodel_nonlinear, train, type = "response")
+#hist(prd, xlab = "Predicted Probabilities IS logit")
+
+#####
+## In-sample Non-Linear Logit Model
+####
+
+# Setting seed and loading in the ROC.R
+set.seed(124)
+source("roc.R")
+
+cutoff_points = c(0.02,0.1,0.33,0.4,0.5,0.6,0.8,0.9)
+cutoff_colors = c("blue","red","green","yellow","purple", "darkgreen", "brown", "pink")
+
+# IS curve
+par(mai=c(.9,.9,.2,.1)) # format margins
+roc(prd_logit_nonlinear, Y, bty="n", main="IS ROC Logit Non-Linear") # from roc.R
+
+# For loop to make my code more concise
+for (i in cutoff_points){
+  points(x=1-mean((prd_logit_nonlinear<=i)[Y==0]), y=mean((prd_logit_nonlinear>i)[Y==1]), cex=1.5, pch=20, col=cutoff_colors[match(i,cutoff_points)])
+}
+
+legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="cutoffs")
+
+
+
+#####
+## Out-of-sample Non-Linear Logit Model
+####
+
+prd_logit_nonlinear_oos<- predict(logmodel_nonlinear, test, type = "response")
+
+# Setting seed and loading in the ROC.R
+set.seed(124)
+source("roc.R")
+
+cutoff_points = c(0.02,0.1,0.33,0.4,0.5,0.6,0.8,0.9)
+cutoff_colors = c("blue","red","green","yellow","purple", "darkgreen", "brown", "pink")
+
+# OOS Logit curve
+par(mai=c(.9,.9,.2,.1)) # format margins
+roc(prd_logit_nonlinear_oos, Y_test, bty="n", main="OOS ROC Logit Non-Linear") # from roc.R
+
+# For loop to make my code more concise
+for (i in cutoff_points){
+  points(x=1-mean((prd_logit_nonlinear_oos<=i)[Y_test==0]), y=mean((prd_logit_nonlinear_oos>i)[Y_test==1]), cex=1.5, pch=20, col=cutoff_colors[match(i,cutoff_points)])
 }
 
 legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="cutoffs")
@@ -222,7 +288,7 @@ library(caret)
 confusionMatrix(data = prd_cv, 
                 reference = train$college)
 # Plotting the histogram of predicted probabilities
-hist(pred_CV, xlab = "Predicted Probabilities IS CV-Gamlr")
+#hist(pred_CV, xlab = "Predicted Probabilities IS CV-Gamlr")
 
 #p <- 0.2
 #cat("proportion of positive classifications that are correct:", mean(Y[pred_CV>p] ), "\n")
