@@ -35,10 +35,8 @@ race_totals <- df %>%
 race_college_totals <- df %>%
   group_by(race_group, college) %>%
   summarise(totals=sum(tabulate(race_group)))
-race_college <- race_college_totals[race_college_totals$college==1,] #data with the total number that completed 
-#college of each race group
 
-ggplot(race_college, aes(y=totals, x=race_group)) +
+ggplot(race_college_totals, aes(y=totals, x=race_group, fill=college)) +
   geom_bar(position = "dodge", stat = "identity") +
   ggtitle("Total Number of Individuals Who \n Completed College by Race") +
   xlab("Race Group") +
@@ -52,6 +50,11 @@ gender_college_totals <- df %>%
   group_by(SEX, college) %>%
   summarise(totals=sum(tabulate(SEX))) #data with the total number that completed 
 #college of each gender
+ggplot(gender_college_totals, aes(y=totals, x=SEX, fill=college)) +
+  geom_bar(position = "dodge", stat = "identity") +
+  ggtitle("Total Number of Individuals Who \n Completed College by Gender") +
+  xlab("Gender") +
+  ylab("Total Number of Individuals") #plots the total number of people who completed college by income group
 
 #Family Income Descriptive Statistics
 #income grouping
@@ -77,10 +80,8 @@ income_totals <- df %>%
 income_college_totals <- df %>%
   group_by(income_group, college) %>%
   summarise(totals=sum(tabulate(income_group)))
-income_college <- income_college_totals[income_college_totals$college==1,] #data with the total number that completed 
-#college of each income group
 
-ggplot(income_college, aes(y=totals, x=income_group)) +
+ggplot(income_college_totals, aes(y=totals, x=income_group, fill=college)) +
   geom_bar(position = "dodge", stat = "identity") +
   ggtitle("Total Number of Individuals Who \n Completed College by Income Group") +
   xlab("Income Group") +
