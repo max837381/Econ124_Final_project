@@ -30,7 +30,7 @@ df <- df[df$RACE!=100,]
 # Remove single observations (will cause problems in training set and test set split)
 df <- df[df$CLASSWKR!=29,]
 df <- df[df$WKSTAT!=14,]
-df <- df[df$WHYABSNT!=10,]
+df <- df[df$WHYABSNT!=10 & df$WHYABSNT!=7,]
 
 # Limiting our sample to people of age to have generally completed a Bachelor's degree by removing anyone under 22 years old
 df <- df[df$AGE>21,]
@@ -45,98 +45,96 @@ df$uppermiddle <- ifelse(df$FAMINC >= 830 & df$FAMINC < 842,1,0) #classifies som
 df$upperclass <- ifelse(df$FAMINC >= 842 & df$FAMINC != 999,1,0) #classifies someone as being upper class if their family income is greater than or equal to
 #$100,000
 
-# BPL, FBPL, MBPL, OCC
-# Take out unnecessary variables
+
+# Take out unnecessary variables such as linking variables from CPS
 df <- subset(df, select = -c(SERIAL, HWTFINL, CPSID, PERNUM, WTFINL, CPSIDP, EDUC, EARNWEEK, HOURWAGE, PAIDHOUR, UNION, FAMINC, BPL, MBPL, FBPL, OCC, IND))
 
 # Check if factor
 is.factor(df$SEX)
+
+# Make the appropriate variables into factors using a for loop
 factor_columns <- colnames(df[colnames(df)!="AGE" & colnames(df)!="YRIMMIG" & colnames(df)!="college" &colnames(df)!="UHRSWORKT" & colnames(df)!="AHRSWORKT"])
-# Make the appropriate variables into factors
 for(i in factor_columns) {
   df[,i] <- factor(df[,i])}
 
-# Check if factor
+# Check again if factor
 is.factor(df$SEX)
 
+# Make sure that we dont have factors in the RACE variable with small number of observations that may cause issues during our splitting into training and test set
 summary(df$RACE)
-#df <- df[!(as.numeric(df$IND) %in% which(table(df$IND)<40)),]
-df <- df[!(as.numeric(df$RACE) %in% which(table(df$RACE)<20)),]
+
+# Take out any factor with fewer than 10 observations for the RACE variable
+df <- df[!(as.numeric(df$RACE) %in% which(table(df$RACE)<10)),]
 
 
-college <- df[df$college==1,]
-## Drop race variables with very low numbers (predict function will not work if training and test sets have different number of levels)
-#df<-df[!(df$RACE=="807" | df$RACE=="808" | df$RACE=="814" | df$RACE=="815" | df$RACE=="816" | df$RACE=="817" | df$RACE=="818" | df$RACE=="820"),]
-# Splitting the data into december and january
-# dec21 will be the dataset we will be using. Then we will check on the jan 22 data to see if our predictions for binary classifications are accurate. (IS vs OOS)
+# dec21 will be the dataset we will be using from the December 2021 CPS data.
 dec21 <- df[df$YEAR==2021,]
-jan22 <- df[df$YEAR==2022,]
 
-# See if number of observations are fairly equal
-
-
-# Set.seed function to replicate the random selections from our project's R code
-set.seed(124) 
-
-# Take out year and month
+# Take out year and month since we don't need them
 dec21 <- subset(dec21, select = -c(YEAR, MONTH))
-jan22 <- subset(jan22, select = -c(YEAR, MONTH))
 
-# Find NA values
+# Find NA values since those will cause issues for our models
 sum(is.na(dec21))
-mean(is.na(dec21))
-#dec21 <- dec21[, sapply(dec21, nlevels) > 1]
 
-# Split our data using 70/30 for the training set and test set
+# Split our data using 70/30 for the training set and test set using the December 2021 data
 split = sort(sample(nrow(dec21), nrow(dec21)*.7))
 train <- dec21[split,]
 test <- dec21[-split,]
 
+# We have completed our initial setup and we are ready to run our first model
+
 ###################################################################################################
-### Part 2: Initial Linear Logit Model
+### Part 2: Initial Logistic regression model
 ###################################################################################################
-# Logistic regression
-# STATEFIP + METRO + AGE + SEX + RACE + MARST + CITIZEN + EMPSTAT + CLASSWKR + WKSTAT + DIFFANY
+# Logistic regression where we are regressing having a Bachelor's degree or higher on the covariates in our dataset
 logmodel <- glm(college ~ ., data=train, family = "binomial")
 summary(logmodel)
-logLik(logmodel)
+
+# Checking the coefficients of our logistic regression model
 coefs <- sort(coefficients(logmodel), decreasing = TRUE)
 coefs
 
-##################
-## Evaluate our logit model IS (in sample)
-#pred_logit1 <- predict(logmodel, newdata = train, type="response")
-#pred_logit2 <- predict(logmodel, newdata = test, type="response")
 
+# Prepare our Y and X 
 Y <- train$college
-Y_test <- test$college
 X <- train[colnames(train)!="college"]
+
+# for test set too
+Y_test <- test$college
 X_test <- test[colnames(test)!="college"]
 
 
-# Use model developed on the training dataset
-# to make predictions on the test dataset.
+# Use model developed on the training dataset to compute the predicted probabilities
+# based on the initial logistic regression model
 prd<- predict(logmodel, train, type = "response")
+
 #hist(prd, xlab = "Predicted Probabilities IS logit")
 
+# function to compute binomial deviance (log-likelihood)
 logit_dev <- function(y, pred) {
   return( -2*sum( y*log(pred) + (1-y)*log(1-pred) ) )
 }
+
+
+
+# Computing binomial deviance for our initial logistic regression model
 logit_dev(Y,prd)
+
+
 #####
-## In-sample Linear Logit Model
+## In-sample Logit Model ROC Curve
 ####
 
 # Setting seed and loading in the ROC.R
 set.seed(124)
 source("roc.R")
 
-cutoff_points = c(0.02,0.1,0.33,0.4,0.5,0.6,0.8,0.9)
+cutoff_points = c(0.1,0.2,0.3,0.4,0.5,0.6,0.8,0.9)
 cutoff_colors = c("blue","red","green","yellow","purple", "darkgreen", "brown", "pink")
 
 # IS curve
 par(mai=c(.9,.9,.2,.1)) # format margins
-roc(prd, Y, bty="n", main="IS ROC Linear Logit") # from roc.R
+roc(prd, Y, bty="n", main="In-sample ROC Initial Logit Model") # from roc.R
 
 # For loop to make my code more concise
 for (i in cutoff_points){
@@ -148,21 +146,22 @@ legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="
 
 
 #####
-## Out-of-sample Linear Logit Model
+## Out-of-sample Logit Model ROC Curve
 ####
 
+# Computing predicted probabilities for out-of-sample data using the test set
 prd2<- predict(logmodel, test, type = "response")
 
 # Setting seed and loading in the ROC.R
 set.seed(124)
 source("roc.R")
 
-cutoff_points = c(0.02,0.1,0.33,0.4,0.5,0.6,0.8,0.9)
+cutoff_points = c(0.1,0.2,0.3,0.4,0.5,0.6,0.8,0.9)
 cutoff_colors = c("blue","red","green","yellow","purple", "darkgreen", "brown", "pink")
 
 # OOS Logit curve
 par(mai=c(.9,.9,.2,.1)) # format margins
-roc(prd2, Y_test, bty="n", main="OOS ROC Linear Logit") # from roc.R
+roc(prd2, Y_test, bty="n", main="Out-of-sample ROC Initial Logit Model") # from roc.R
 
 # For loop to make my code more concise
 for (i in cutoff_points){
@@ -171,99 +170,109 @@ for (i in cutoff_points){
 
 legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="cutoffs")
 
+logit_dev(Y_test, prd2)
+
 ###################################################################################################
-### Part 3: Non-Linear Logit Model
+### Part 3: Logit Model with interaction terms
 ###################################################################################################
-# Non-Linear Logistic regression
-# STATEFIP + METRO + AGE + SEX + RACE + MARST + CITIZEN + EMPSTAT + CLASSWKR + WKSTAT + DIFFANY
-logmodel_nonlinear <- glm(college ~ STATEFIP + (SEX + RACE + EMPSTAT)^2 +., data=train, family = "binomial")
-summary(logmodel_nonlinear)
-coefs <- sort(coefficients(logmodel_nonlinear), decreasing = TRUE)
+# Logistic regression with some interaction terms (could not interact everything since the glm command would crash R)
+# Even with some interaction terms might take 1-2 minutes to run
+logmodel_interactions <- glm(college ~ STATEFIP + (SEX + RACE + EMPSTAT + AGE)^2 +., data=train, family = "binomial")
+summary(logmodel_interactions)
+
+# Checking the coefficients of our logistic regression model with interactions
+coefs <- sort(coefficients(logmodel_interactions), decreasing = TRUE)
 coefs
-##################
-## Evaluate our logit model IS (in sample)
-#pred_logit1 <- predict(logmodel, newdata = train, type="response")
-#pred_logit2 <- predict(logmodel, newdata = test, type="response")
 
-Y <- train$college
-Y_test <- test$college
-X <- train[colnames(train)!="college"]
-X_test <- test[colnames(test)!="college"]
+# Use model developed on the training dataset to compute the predicted probabilities
+# based on the logistic regression model with interaction terms
+prd_logit_interactions <- predict(logmodel_interactions, train, type = "response")
 
-
-# Use model developed on the training dataset
-# to make predictions on the test dataset.
-prd_logit_nonlinear<- predict(logmodel_nonlinear, train, type = "response")
-#hist(prd, xlab = "Predicted Probabilities IS logit")
 
 #####
-## In-sample Non-Linear Logit Model
+## In-sample Logit Interaction terms Model
 ####
 
 # Setting seed and loading in the ROC.R
 set.seed(124)
 source("roc.R")
 
-cutoff_points = c(0.02,0.1,0.33,0.4,0.5,0.6,0.8,0.9)
+cutoff_points = c(0.1,0.2,0.3,0.4,0.5,0.6,0.8,0.9)
 cutoff_colors = c("blue","red","green","yellow","purple", "darkgreen", "brown", "pink")
 
 # IS curve
 par(mai=c(.9,.9,.2,.1)) # format margins
-roc(prd_logit_nonlinear, Y, bty="n", main="IS ROC Logit Non-Linear") # from roc.R
+roc(prd_logit_interactions, Y, bty="n", main="In-sample ROC Logit Interaction Terms") # from roc.R
 
 # For loop to make my code more concise
 for (i in cutoff_points){
-  points(x=1-mean((prd_logit_nonlinear<=i)[Y==0]), y=mean((prd_logit_nonlinear>i)[Y==1]), cex=1.5, pch=20, col=cutoff_colors[match(i,cutoff_points)])
+  points(x=1-mean((prd_logit_interactions<=i)[Y==0]), y=mean((prd_logit_interactions>i)[Y==1]), cex=1.5, pch=20, col=cutoff_colors[match(i,cutoff_points)])
 }
 
 legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="cutoffs")
 
+# Computing the binomial deviance for our new model
+logit_dev(Y,prd_logit_interactions)
 
+# We can see that the interaction model performed slightly better, having a lower binomial deviance. However we are more interested in 
+# out-of-sample performance.
 
 #####
 ## Out-of-sample Non-Linear Logit Model
 ####
 
-prd_logit_nonlinear_oos<- predict(logmodel_nonlinear, newdata=test, type = "response")
+prd_logit_interactions_oos<- predict(logmodel_interactions, newdata=test, type = "response")
 
 # Setting seed and loading in the ROC.R
 set.seed(124)
 source("roc.R")
 
-cutoff_points = c(0.02,0.1,0.33,0.4,0.5,0.6,0.8,0.9)
+cutoff_points = c(0.1,0.2,0.3,0.4,0.5,0.6,0.8,0.9)
 cutoff_colors = c("blue","red","green","yellow","purple", "darkgreen", "brown", "pink")
 
 # OOS Logit curve
 par(mai=c(.9,.9,.2,.1)) # format margins
-roc(prd_logit_nonlinear_oos, Y_test, bty="n", main="OOS ROC Logit Non-Linear") # from roc.R
+roc(prd_logit_interactions_oos, Y_test, bty="n", main="OOS ROC Logit Non-Linear") # from roc.R
 
 # For loop to make my code more concise
 for (i in cutoff_points){
-  points(x=1-mean((prd_logit_nonlinear_oos<=i)[Y_test==0]), y=mean((prd_logit_nonlinear_oos>i)[Y_test==1]), cex=1.5, pch=20, col=cutoff_colors[match(i,cutoff_points)])
+  points(x=1-mean((prd_logit_interactions_oos<=i)[Y_test==0]), y=mean((prd_logit_interactions_oos>i)[Y_test==1]), cex=1.5, pch=20, col=cutoff_colors[match(i,cutoff_points)])
 }
 
 legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="cutoffs")
 
-logit_dev(Y_test,prd2)
+logit_dev(Y_test,prd_logit_interactions_oos)
+# This performed worse out-of-sample with a higher binomial deviance
+# We will attempt a ML method next to see if we can achieve better out-of-sample binomial deviance
+
 ###################################################################################################
-### Part 4: k-fold CV model
+### Part 4: k-fold Cross-Validation model
 ###################################################################################################
 
-
+# Load the gamlr library to run our k-fold CV model using a LASSO regression
 library(gamlr)
+
+# use naref() to ensure that R does not set a reference level for any of the categorical variables.
 X <- naref(X)
 X_test <- naref(X_test)
 
-# Making the X matrix
+# Making the X matrix with interactions since cv.gamlr will use regularization to pick the most 'important' regressors
 X <- sparse.model.matrix(~ .^2, data=X)[,-1]
 X_test <- sparse.model.matrix(~ .^2, data=X_test)[,-1]
+
+# Checking the dimensions of our matrices
 dim(X)
+dim(X_test)
+
+
 # Estimating a logit model with lasso regularization and penalty obtained from 10-fold cross-validation
 cross_validation <- cv.gamlr(X, Y, nfold = 10, family="binomial", verb=TRUE)
 
+# lasso regularization path
+plot(cross_validation$gamlr)
 
-plot(cross_validation$gamlr) # lasso regularization path
-plot(cross_validation) # plot of cross-validation error against lambda
+# plot of cross-validation error against lambda
+plot(cross_validation)
 
 # Number of non-zero coefficients in the optimal CV model minus the intercept
 cat("number of nonzero coefficients for CV-optimal lambda:", length(which(coef(cross_validation, select="min")!=0))-1, "\n")
@@ -271,6 +280,14 @@ cat("number of nonzero coefficients for CV-optimal lambda:", length(which(coef(c
 # Number of total coefficients of our optimal CV model
 cat("number of total coefficients for CV-optimal lambda:", length(coef(cross_validation, select="min"))-1, "\n")
 
+# Percentage of non-zero coefficients
+percentage_coef <- (length(which(coef(cross_validation, select="min")!=0))-1)/(length(coef(cross_validation, select="min"))-1)
+percentage_coef <- percentage_coef*100
+
+# Optimal CV model has approximately 3% non-zero coefficients compared to the total number of coefficients
+percentage_coef
+
+# Creating an object with coefficients from the optimal model
 cv_coefs <- drop(coef(cross_validation, select="min"))
 
 # Drop intercept
@@ -283,32 +300,20 @@ sort(non_zero_coef, decreasing = TRUE)
 # Computing the predicted probabilities
 pred_CV <- drop(predict(cross_validation, select='min', X, type="response"))
 
-# Flag predicted probabilities as 1/0
-prd_cv<-as.factor(ifelse(pred_CV>0.5,1,0))
-
-# use caret and compute a confusion matrix
-library(caret)
-confusionMatrix(data = prd_cv, 
-                reference = train$college)
-# Plotting the histogram of predicted probabilities
-#hist(pred_CV, xlab = "Predicted Probabilities IS CV-Gamlr")
-
-#p <- 0.2
-#cat("proportion of positive classifications that are correct:", mean(Y[pred_CV>p] ), "\n")
-
-#cat("proportion of negative classifications that are correct:", mean( (1-Y)[pred_CV<=p] ), "\n")
-
+#####
+## In-sample Cross-Validation Model
+####
 
 # Setting seed and loading in the ROC.R
 set.seed(124)
 source("roc.R")
 
-cutoff_points = c(0.02,0.1,0.33,0.4,0.5,0.6,0.8,0.9)
+cutoff_points = c(0.1,0.2,0.3,0.4,0.5,0.6,0.8,0.9)
 cutoff_colors = c("blue","red","green","yellow","purple", "darkgreen", "brown", "pink")
 
 # IS curve
 par(mai=c(.9,.9,.2,.1)) # format margins
-roc(pred_CV, Y, bty="n", main="IS ROC CV") # from roc.R
+roc(pred_CV, Y, bty="n", main="In-sample ROC Cross-Validation") # from roc.R
 
 # For loop to make my code more concise
 for (i in cutoff_points){
@@ -317,97 +322,158 @@ for (i in cutoff_points){
 
 legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="cutoffs")
 
-# refit the model using test data
-set.seed(124)
-pred_oos <- drop(predict(cross_validation, select='min', X_test, type="response"))
-Y_oos <- Y_test
-
-roc(pred_oos, Y_oos, bty="n", main="OOS ROC CV")
-
-for (i in cutoff_points){
-  points(x=1-mean((pred_oos<=i)[Y_oos==0]), y=mean((pred_oos>i)[Y_oos==1]), cex=1.5, pch=20, col=cutoff_colors[match(i,cutoff_points)])
-}
-# p = 0.2
-#points(x=1-mean((pred_oos<.2)[Y_oos==0]), y=mean((pred_oos>.2)[Y_oos==1]), cex=1.5, pch=20, col='red') 
-# p = 0.5
-#points(x=1-mean((pred_oos<.5)[Y_oos==0]), y=mean((pred_oos>.5)[Y_oos==1]), cex=1.5, pch=20, col='blue') 
-legend("bottomright",fill=cutoff_colors, legend=cutoff_points,bty="n",title="cutoffs")
-
-
-# Computing the predicted probabilities
-pred_CV2 <- drop(predict(cross_validation, select='min', X_test, type="response"))
-
-logit_dev(Y, pred_CV2)
 logit_dev(Y, pred_CV)
-logit_dev(Y_test, pred_oos)
-# Flag predicted probabilities as 1/0
-prd_cv2<-as.factor(ifelse(pred_CV2>0.5,1,0))
-
-# use caret and compute a confusion matrix
-library(caret)
-confusionMatrix(data = prd_cv2, 
-                reference = test$college)
-
-#########
-## Evaluate using january data
-#########
 
 
-# Make sure there is the same number of X's so we will randomly drop some observations from jan22 data frame
+#####
+## Out-of-sample Cross-Validation Model
+####
 
-
-# refit the model using test data
 set.seed(124)
-Y_jan <- jan22$college
-X_jan <- jan22[colnames(test)!="college"]
-X_jan <- sparse.model.matrix(~ .^2, data=X_jan)[,-1]
-sample_split <- sample.int(nrow(jan22),nrow(train))
-pred_oos <- drop(predict(cross_validation, select='min', X_jan[sample_split,], type="response"))
-Y_oos <- Y_jan
+pred_CV_oos <- drop(predict(cross_validation, select='min', X_test, type="response"))
 
-roc(pred_oos, Y_oos, bty="n", main="OOS ROC January 2022 Data")
+
+roc(pred_CV_oos, Y_test, bty="n", main="OOS ROC CV")
 
 for (i in cutoff_points){
-  points(x=1-mean((pred_oos<=i)[Y_oos==0]), y=mean((pred_oos>i)[Y_oos==1]), cex=1.5, pch=20, col=cutoff_colors[match(i,cutoff_points)])
+  points(x=1-mean((pred_CV_oos<=i)[Y_test==0]), y=mean((pred_CV_oos>i)[Y_test==1]), cex=1.5, pch=20, col=cutoff_colors[match(i,cutoff_points)])
 }
-# p = 0.2
-#points(x=1-mean((pred_oos<.2)[Y_oos==0]), y=mean((pred_oos>.2)[Y_oos==1]), cex=1.5, pch=20, col='red') 
-# p = 0.5
-#points(x=1-mean((pred_oos<.5)[Y_oos==0]), y=mean((pred_oos>.5)[Y_oos==1]), cex=1.5, pch=20, col='blue') 
+
 legend("bottomright",fill=cutoff_colors, legend=cutoff_points,bty="n",title="cutoffs")
 
 
-# Computing the predicted probabilities
-pred_CV3 <- drop(predict(cross_validation, select='min', X_jan, type="response"))
+logit_dev(Y_test, pred_CV_oos)
 
-# Flag predicted probabilities as 1/0
-prd_cv3<-as.factor(ifelse(pred_CV3>0.5,1,0))
-
-# use caret and compute a confusion matrix
-library(caret)
-confusionMatrix(data = prd_cv3, 
-                reference = jan22$college)
 
 ###################################################################################################
 ### Part 4: Random Forests model
 ###################################################################################################
 #install.packages("randomForest")
-library(pROC)
 library(randomForest)
-#library("ranger")
+#library(ranger)
 set.seed(124)
+
+# Convert X matrix to dataframe in order to use it for our Random Forests model
+#X_RF <- as.data.frame(as.matrix(X))
+#X_randomforest <- X_RF
+
+# Convert Y variable to factor to use in RF model
 Y_randomforest <- factor(train$college)
-X_randomforest <- train[colnames(train)!="college"]
-#train <- subset(train, select = -c(college))
+X_randomforest <- as.matrix(train[colnames(train)!="college"])
+
+Y_randomforest_test <- factor(test$college)
+X_randomforest_test <- as.matrix(test[colnames(test)!="college"])
+# Random Forest model
 classifier_RF = randomForest(x = X_randomforest,
                              y = Y_randomforest,
-                             ntree = 100)
+                             ntree = 300)
 
 classifier_RF
 
-# Predicting the Test set results
-y_pred = predict(classifier_RF, newdata = test)
+# Predicting the in-sample predicted probabilities
+rf_pred_train <- predict(classifier_RF, newdata = X_randomforest, type = "prob")
+rf_pred_train <- rf_pred_train[,2]
+rf_pred_train[rf_pred_train==0] <- 0.00000000001
+rf_pred_train[rf_pred_train==1] <- 0.000000000099
 
+
+# Setting seed and loading in the ROC.R
+set.seed(124)
+source("roc.R")
+
+cutoff_points = c(0.1,0.2,0.3,0.4,0.5,0.6,0.8,0.9)
+cutoff_colors = c("blue","red","green","yellow","purple", "darkgreen", "brown", "pink")
+
+# IS curve
+par(mai=c(.9,.9,.2,.1)) # format margins
+roc(rf_pred_train, Y, bty="n", main="In-sample ROC Cross-Validation") # from roc.R
+
+# For loop to make my code more concise
+for (i in cutoff_points){
+  points(x=1-mean((rf_pred_train<=i)[Y==0]), y=mean((rf_pred_train>i)[Y==1]), cex=1.5, pch=20, col=cutoff_colors[match(i,cutoff_points)])
+}
+
+legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="cutoffs")
+
+logit_dev(Y, rf_pred_train)
+
+
+# Predicting the out-of-sample predicted probabilities
+rf_pred_test <- predict(classifier_RF, newdata = X_randomforest_test, type = "prob")
+rf_pred_test <- rf_pred_test[,2]
+rf_pred_test[rf_pred_test==0] <- 0.00000000001
+rf_pred_test[rf_pred_test==1] <- 0.000000000099
+
+###################################################################################################
+### Part 5: Comparing all our models
+###################################################################################################
+
+
+#####
+# In-sample comparison
+####
+
+# Setting seed and loading in the ROC.R
+set.seed(124)
+source("rocCOL.R")
+
+cutoff_points = c("Logit","Logit Interactions","Cross-Validation","Random Forests")
+cutoff_colors = c("1","2","3","4")
+
+# IS curve
+par(mai=c(.9,.9,.2,.1)) # format margins
+roc(prd, Y, prd_logit_interactions, Y, pred_CV, Y, rf_pred_train, Y, bty="n", main="In-Sample Model Comparison") # from roc.R
+
+legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="Model Reference")
+
+
+
+
+#####
+# Out-of-sample comparison
+####
+# Setting seed and loading in the ROC.R
+set.seed(124)
+source("rocCOL.R")
+
+cutoff_points = c("Logit","Logit Interactions","Cross-Validation","Random Forests")
+cutoff_colors = c("1","2","3","4")
+
+# OOs curve
+par(mai=c(.9,.9,.2,.1)) # format margins
+roc(prd2, Y_test, prd_logit_interactions_oos, Y_test, pred_CV_oos, Y_test, rf_pred_test, Y_test, bty="n", main="Out-of-Sample Model Comparison") # from roc.R
+
+legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="Model Reference")
+
+logit_dev(Y_test, rf_pred_test)
+
+
+
+#########
+# In-sample histograms
+#########
+# Plotting the histogram of predicted probabilities
+par(mfrow=c(2,2))
+hist(prd, main ="Logit Model", xlab = "In-sample Predicted Probabilities",col='orangered2')
+hist(prd_logit_interactions, main ="Logit Interactions Model", xlab = "In-sample Predicted Probabilities", col='lightblue')
+hist(pred_CV, main ="Cross-Validation", xlab = "In-sample Predicted Probabilities", col='palegreen3')
+hist(rf_pred_train, main ="Random Forests", xlab = "In-sample Predicted Probabilities", col='thistle2')
+
+#########
+# Out-of-sample histograms
+#########
+# Plotting the histogram of predicted probabilities
+par(mfrow=c(2,2))
+hist(prd2, main ="Logit Model", xlab = "Out-of-sample Predicted Probabilities",col='orangered2')
+hist(prd_logit_interactions_oos, main ="Logit Interactions Model", xlab = "Out-of-sample Predicted Probabilities", col='lightblue')
+hist(pred_CV_oos, main ="Cross-Validation", xlab = "Out-of-sample Predicted Probabilities", col='palegreen3')
+hist(rf_pred_test, main ="Random Forests", xlab = "Out-of-sample Predicted Probabilities", col='thistle2')
+
+
+
+########################################################################################################################
+## IGNORE THIS FOR NOW
+########################################################################################################################
 # Confusion Matrix
 confusion_mtx = table(test[, 5], y_pred)
 confusion_mtx
@@ -420,59 +486,4 @@ importance(classifier_RF)
 
 # Variable importance plot
 varImpPlot(classifier_RF)
-
-
-predictionsman <- predict(classifier_RF, train, type = "prob")
-prd_randomforest <- predictionsman[,2]
-logit_dev(Y,prd_randomforest)
-p <- as.numeric(prd_randomforest)
-rf_prediction <- predict(classifier_RF, test, type = "prob")
-rf_pred <- rf_prediction[,2]
-ROC_rf <- roc(test$college, rf_prediction[,2])
-ROC_lr <- roc(test$college, prd2)
-ROC_rf_auc <- auc(ROC_rf)
-plot(ROC_rf, col = "green", main = "ROC For Random Forest (GREEN)")
-lines(ROC_lr, col = "red")
-
-random_forest <- ranger(college ~ ., data = train, write.forest = TRUE, num.tree = 400, min.node.size = 1, importance = "impurity", probability = TRUE, classification = TRUE)
-
-probabilities_rf = predict(random_forest, data = train, type = "response")$predictions
-logit_dev(Y, probabilities_rf)
-logit_dev(Y, prd)
-hist(probabilities_rf)
-
-pred_rf_oos <- predict(random_forest, data = test, type = "response")$predictions
-logit_dev(Y_test, pred_rf_oos)
-barplot(sort(importance(random_forest), decreasing = TRUE), las = 2)
-plot(random_forest)
-rf <- ranger(college ~)
-#####
-## In-sample Non-Linear Logit Model
-####
-
-# Setting seed and loading in the ROC.R
-set.seed(124)
-source("roc.R")
-
-cutoff_points = c(0.02,0.1,0.33,0.4,0.5,0.6,0.8,0.9)
-cutoff_colors = c("blue","red","green","yellow","purple", "darkgreen", "brown", "pink")
-
-# IS curve
-par(mai=c(.9,.9,.2,.1)) # format margins
-roc(rf_pred, Y_test, bty="n", main="IS ROC Random Forest") # from roc.R
-
-# For loop to make my code more concise
-for (i in cutoff_points){
-  points(x=1-mean((rf_pred<=i)[Y_test==0]), y=mean((rf_pred>i)[Y_test==1]), cex=1.5, pch=20, col=cutoff_colors[match(i,cutoff_points)])
-}
-
-legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="cutoffs")
-
-
-########
-## No spec model
-#######
-no_specifications_random_forest <- ranger(college ~ ., data = train, write.forest = TRUE, importance = "impurity", probability = TRUE)
-no_specifications_probabilities_rf = predict(no_specifications_random_forest, data = train)$predictions
-
 
