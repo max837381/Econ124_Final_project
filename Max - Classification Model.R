@@ -3,20 +3,20 @@
 ###################################################################################################
 ### Part 1: Setting up the data
 ###################################################################################################
-#install.packages("ROCR")
-#install.packages("caret")
-#install.packages("ranger")
+#install.packages("randomForest")
+#install.packages(dplyr)
+#install.packages(tidyr)
+#install.packages(ggplot2)
 
 # Administrative cleanup
 # Clearing the environment, setting the seed and loading packages we will use in our project.
 rm(list = ls())
 if(!is.null(dev.list())) dev.off()
 set.seed(124)
-#library(caret)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
-library(ranger)
+library(randomForest)
 
 # Read in the data
 df <- read.csv("cps_00010.csv")
@@ -108,19 +108,6 @@ X_test <- test[colnames(test)!="college"]
 # based on the initial logistic regression model
 prd<- predict(logmodel, train, type = "response")
 
-#hist(prd, xlab = "Predicted Probabilities IS logit")
-
-# function to compute binomial deviance (log-likelihood)
-logit_dev <- function(y, pred) {
-  return( -2*sum( y*log(pred) + (1-y)*log(1-pred) ) )
-}
-
-
-
-# Computing binomial deviance for our initial logistic regression model
-logit_dev(Y,prd)
-
-
 #####
 ## In-sample Logit Model ROC Curve
 ####
@@ -170,8 +157,6 @@ for (i in cutoff_points){
 
 legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="cutoffs")
 
-logit_dev(Y_test, prd2)
-
 ###################################################################################################
 ### Part 3: Logit Model with interaction terms
 ###################################################################################################
@@ -211,8 +196,7 @@ for (i in cutoff_points){
 
 legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="cutoffs")
 
-# Computing the binomial deviance for our new model
-logit_dev(Y,prd_logit_interactions)
+
 
 # We can see that the interaction model performed slightly better, having a lower binomial deviance. However we are more interested in 
 # out-of-sample performance.
@@ -241,9 +225,6 @@ for (i in cutoff_points){
 
 legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="cutoffs")
 
-logit_dev(Y_test,prd_logit_interactions_oos)
-# This performed worse out-of-sample with a higher binomial deviance
-# We will attempt a ML method next to see if we can achieve better out-of-sample binomial deviance
 
 ###################################################################################################
 ### Part 4: k-fold Cross-Validation model
@@ -322,9 +303,6 @@ for (i in cutoff_points){
 
 legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="cutoffs")
 
-logit_dev(Y, pred_CV)
-
-
 #####
 ## Out-of-sample Cross-Validation Model
 ####
@@ -341,28 +319,18 @@ for (i in cutoff_points){
 
 legend("bottomright",fill=cutoff_colors, legend=cutoff_points,bty="n",title="cutoffs")
 
-
-logit_dev(Y_test, pred_CV_oos)
-
-
 ###################################################################################################
 ### Part 4: Random Forests model
 ###################################################################################################
-#install.packages("randomForest")
-library(randomForest)
-#library(ranger)
 set.seed(124)
-
-# Convert X matrix to dataframe in order to use it for our Random Forests model
-#X_RF <- as.data.frame(as.matrix(X))
-#X_randomforest <- X_RF
 
 # Convert Y variable to factor to use in RF model
 Y_randomforest <- factor(train$college)
 X_randomforest <- as.matrix(train[colnames(train)!="college"])
-
 Y_randomforest_test <- factor(test$college)
 X_randomforest_test <- as.matrix(test[colnames(test)!="college"])
+
+
 # Random Forest model
 classifier_RF = randomForest(x = X_randomforest,
                              y = Y_randomforest,
@@ -370,9 +338,27 @@ classifier_RF = randomForest(x = X_randomforest,
 
 classifier_RF
 
+
+
+# Plotting model
+plot(classifier_RF)
+
+# Importance plot
+importance(classifier_RF)
+
+# Variable importance plot
+varImpPlot(classifier_RF)
+
+
+#####
+## In-sample Random Forests Model
+####
+
 # Predicting the in-sample predicted probabilities
 rf_pred_train <- predict(classifier_RF, newdata = X_randomforest, type = "prob")
 rf_pred_train <- rf_pred_train[,2]
+
+# Random forest model will have some 0 and 1 predicted probablities which will crash our logit_dev function
 rf_pred_train[rf_pred_train==0] <- 0.00000000001
 rf_pred_train[rf_pred_train==1] <- 0.000000000099
 
@@ -395,14 +381,35 @@ for (i in cutoff_points){
 
 legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="cutoffs")
 
-logit_dev(Y, rf_pred_train)
-
+#####
+## Out-of-sample Random Forests model
+####
 
 # Predicting the out-of-sample predicted probabilities
 rf_pred_test <- predict(classifier_RF, newdata = X_randomforest_test, type = "prob")
 rf_pred_test <- rf_pred_test[,2]
+
+# Random forest model will have some 0 and 1 predicted probablities which will crash our logit_dev function
 rf_pred_test[rf_pred_test==0] <- 0.00000000001
 rf_pred_test[rf_pred_test==1] <- 0.000000000099
+
+# Setting seed and loading in the ROC.R
+set.seed(124)
+source("roc.R")
+
+cutoff_points = c(0.1,0.2,0.3,0.4,0.5,0.6,0.8,0.9)
+cutoff_colors = c("blue","red","green","yellow","purple", "darkgreen", "brown", "pink")
+
+# IS curve
+par(mai=c(.9,.9,.2,.1)) # format margins
+roc(rf_pred_test, Y_test, bty="n", main="In-sample ROC Cross-Validation") # from roc.R
+
+# For loop to make my code more concise
+for (i in cutoff_points){
+  points(x=1-mean((rf_pred_test<=i)[Y_test==0]), y=mean((rf_pred_test>i)[Y_test==1]), cex=1.5, pch=20, col=cutoff_colors[match(i,cutoff_points)])
+}
+
+legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="cutoffs")
 
 ###################################################################################################
 ### Part 5: Comparing all our models
@@ -410,7 +417,7 @@ rf_pred_test[rf_pred_test==1] <- 0.000000000099
 
 
 #####
-# In-sample comparison
+# In-sample comparison ROC Curves
 ####
 
 # Setting seed and loading in the ROC.R
@@ -430,7 +437,7 @@ legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="
 
 
 #####
-# Out-of-sample comparison
+# Out-of-sample comparison ROC curves
 ####
 # Setting seed and loading in the ROC.R
 set.seed(124)
@@ -444,10 +451,6 @@ par(mai=c(.9,.9,.2,.1)) # format margins
 roc(prd2, Y_test, prd_logit_interactions_oos, Y_test, pred_CV_oos, Y_test, rf_pred_test, Y_test, bty="n", main="Out-of-Sample Model Comparison") # from roc.R
 
 legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="Model Reference")
-
-logit_dev(Y_test, rf_pred_test)
-
-
 
 #########
 # In-sample histograms
@@ -470,20 +473,43 @@ hist(pred_CV_oos, main ="Cross-Validation", xlab = "Out-of-sample Predicted Prob
 hist(rf_pred_test, main ="Random Forests", xlab = "Out-of-sample Predicted Probabilities", col='thistle2')
 
 
+######
+# In-sample Binomial Deviance
+#####
 
-########################################################################################################################
-## IGNORE THIS FOR NOW
-########################################################################################################################
-# Confusion Matrix
-confusion_mtx = table(test[, 5], y_pred)
-confusion_mtx
+# function to compute binomial deviance (log-likelihood)
+logit_dev <- function(y, pred) {
+  return( -2*sum( y*log(pred) + (1-y)*log(1-pred) ) )
+}
 
-# Plotting model
-plot(classifier_RF)
+# Computing binomial deviance for in-sample with all models
+bin_dev_logit <- logit_dev(Y,prd)
+cat("The in-sample binomial deviance for our logit model is", bin_dev_logit)
 
-# Importance plot
-importance(classifier_RF)
+bin_dev_logit_interaction <- logit_dev(Y,prd_logit_interactions)
+cat("The in-sample binomial deviance for our logit model with interactions is", bin_dev_logit_interaction)
 
-# Variable importance plot
-varImpPlot(classifier_RF)
+bin_dev_cv <- logit_dev(Y, pred_CV)
+cat("The in-sample binomial deviance for our Cross-Validation model is", bin_dev_cv)
+
+bin_dev_rf <- logit_dev(Y, rf_pred_train)
+cat("The in-sample binomial deviance for our Random Forests model is", bin_dev_rf)
+#####
+# Out-of-sample Binomial Deviance
+#####
+
+# Computing binomial deviance for out-of-sample with all models
+bin_dev_logit_oos <- logit_dev(Y_test, prd2)
+cat("The out-of-sample binomial deviance for our logit model is", bin_dev_logit_oos)
+
+bin_dev_logit_interaction_oos <- logit_dev(Y_test,prd_logit_interactions_oos)
+cat("The out-of-sample binomial deviance for our logit model with interactions is", bin_dev_logit_interaction_oos)
+
+bin_dev_cv_oos <- logit_dev(Y_test, pred_CV_oos)
+cat("The out-of-sample binomial deviance for our Cross-Validation model is", bin_dev_cv_oos)
+
+bin_dev_rf_oos <- logit_dev(Y_test, rf_pred_test)
+cat("The out-of-sample binomial deviance for our Random Forests model is", bin_dev_rf_oos)
+
+
 
