@@ -3,10 +3,14 @@
 ###################################################################################################
 ### Part 1: Setting up the data
 ###################################################################################################
+
+# These packages will be used. Commented out since you may some of these already!
+
 #install.packages("randomForest")
 #install.packages(dplyr)
 #install.packages(tidyr)
 #install.packages(ggplot2)
+#install.packages(gamlr)
 
 # Administrative cleanup
 # Clearing the environment, setting the seed and loading packages we will use in our project.
@@ -17,8 +21,9 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(randomForest)
+library(gamlr)
 
-# Read in the data
+# Read in the data from CPS
 df <- read.csv("cps_00010.csv")
 
 # Coding our Y variable - whether someone completed college or not (the minimum required is a Bachelor's Degree)
@@ -230,8 +235,7 @@ legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="
 ### Part 4: k-fold Cross-Validation model
 ###################################################################################################
 
-# Load the gamlr library to run our k-fold CV model using a LASSO regression
-library(gamlr)
+# We will use the gamlr library to run our k-fold CV model using a LASSO regression
 
 # use naref() to ensure that R does not set a reference level for any of the categorical variables.
 X <- naref(X)
@@ -494,6 +498,7 @@ cat("The in-sample binomial deviance for our Cross-Validation model is", bin_dev
 
 bin_dev_rf <- logit_dev(Y, rf_pred_train)
 cat("The in-sample binomial deviance for our Random Forests model is", bin_dev_rf)
+
 #####
 # Out-of-sample Binomial Deviance
 #####
