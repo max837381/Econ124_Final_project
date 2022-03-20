@@ -12,7 +12,7 @@
 rm(list = ls())
 if(!is.null(dev.list())) dev.off()
 set.seed(124)
-library(caret)
+#library(caret)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -20,26 +20,22 @@ library(ranger)
 
 # Read in the data
 df <- read.csv("cps_00010.csv")
-#df$unemp <- ifelse(df$EMPSTAT>=20 & df$EMPSTAT<=22,1,0)
+
+# Coding our Y variable - whether someone completed college or not (the minimum required is a Bachelor's Degree)
 df$college <- ifelse(df$EDUC>=111,1,0)
 
-## MINORITIES
+# Removing white people from our sample, only focusing on POCs.
 df <- df[df$RACE!=100,]
 
 # Remove single observations (will cause problems in training set and test set split)
 df <- df[df$CLASSWKR!=29,]
 df <- df[df$WKSTAT!=14,]
 df <- df[df$WHYABSNT!=10,]
-#df$unemp <- factor(df$unemp)
-#unemployed <- as.data.frame(df[df$unemp==1])
-#unemployed <- df[df$unemp==1,]
 
-#college <- as.data.frame(df[df$college==1])
-college <- df[df$college==1,]
-
+# Limiting our sample to people of age to have generally completed a Bachelor's degree by removing anyone under 22 years old
 df <- df[df$AGE>21,]
 
-#income grouping
+#income grouping from Tamar's file
 quantile(df$FAMINC, probs = c(0.25,0.5,0.75))
 df$lowerclass <- ifelse(df$FAMINC <= 730,1,0) #classifies someone as being lower class if their family income is less than or equal to $39,999
 df$lowermiddle <- ifelse(df$FAMINC >= 740 & df$FAMINC < 830,1,0) #classifies someone as being lower middle class if their family income is greater than or equal
