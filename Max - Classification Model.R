@@ -191,7 +191,7 @@ cutoff_colors = c("blue","red","green","yellow","purple", "darkgreen", "brown", 
 
 # IS curve
 par(mai=c(.9,.9,.2,.1)) # format margins
-roc(prd_logit_interactions, Y, bty="n", main="In-sample ROC Logit Interaction Terms") # from roc.R
+roc(prd_logit_interactions, Y, bty="n", main="In-sample ROC Logit Interactions Model") # from roc.R
 
 # For loop to make my code more concise
 for (i in cutoff_points){
@@ -206,7 +206,7 @@ legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="
 # out-of-sample performance.
 
 #####
-## Out-of-sample Non-Linear Logit Model
+## Out-of-sample Logit Interactions Model
 ####
 
 prd_logit_interactions_oos<- predict(logmodel_interactions, newdata=test, type = "response")
@@ -220,7 +220,7 @@ cutoff_colors = c("blue","red","green","yellow","purple", "darkgreen", "brown", 
 
 # OOS Logit curve
 par(mai=c(.9,.9,.2,.1)) # format margins
-roc(prd_logit_interactions_oos, Y_test, bty="n", main="OOS ROC Logit Non-Linear") # from roc.R
+roc(prd_logit_interactions_oos, Y_test, bty="n", main="Out-of-sample ROC Logit Interactions model") # from roc.R
 
 # For loop to make my code more concise
 for (i in cutoff_points){
@@ -297,7 +297,7 @@ cutoff_colors = c("blue","red","green","yellow","purple", "darkgreen", "brown", 
 
 # IS curve
 par(mai=c(.9,.9,.2,.1)) # format margins
-roc(pred_CV, Y, bty="n", main="In-sample ROC Cross-Validation") # from roc.R
+roc(pred_CV, Y, bty="n", main="In-sample ROC Cross-Validation Model") # from roc.R
 
 # For loop to make my code more concise
 for (i in cutoff_points){
@@ -314,7 +314,7 @@ set.seed(124)
 pred_CV_oos <- drop(predict(cross_validation, select='min', X_test, type="response"))
 
 
-roc(pred_CV_oos, Y_test, bty="n", main="OOS ROC CV")
+roc(pred_CV_oos, Y_test, bty="n", main="Out-of-sample ROC Cross-Validation Model")
 
 for (i in cutoff_points){
   points(x=1-mean((pred_CV_oos<=i)[Y_test==0]), y=mean((pred_CV_oos>i)[Y_test==1]), cex=1.5, pch=20, col=cutoff_colors[match(i,cutoff_points)])
@@ -335,22 +335,14 @@ X_randomforest_test <- as.matrix(test[colnames(test)!="college"])
 
 
 # Random Forest model
-classifier_RF = randomForest(x = X_randomforest,
+Random_Forests_model = randomForest(x = X_randomforest,
                              y = Y_randomforest,
                              ntree = 300)
 
-classifier_RF
-
-
-
-# Plotting model
-plot(classifier_RF)
-
-# Importance plot
-importance(classifier_RF)
-
-# Variable importance plot
-varImpPlot(classifier_RF)
+# Random Forests Model plots. Error rates against number of trees and Variable Importance of each variable in the RF model.
+par(mfrow=c(1,2))
+plot(Random_Forests_model, main = "Random Forests Model")
+varImpPlot(Random_Forests_model, main = "Random Forests Model")
 
 
 #####
@@ -358,7 +350,7 @@ varImpPlot(classifier_RF)
 ####
 
 # Predicting the in-sample predicted probabilities
-rf_pred_train <- predict(classifier_RF, newdata = X_randomforest, type = "prob")
+rf_pred_train <- predict(Random_Forests_model, newdata = X_randomforest, type = "prob")
 rf_pred_train <- rf_pred_train[,2]
 
 # Random forest model will have some 0 and 1 predicted probablities which will crash our logit_dev function
@@ -389,7 +381,7 @@ legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="
 ####
 
 # Predicting the out-of-sample predicted probabilities
-rf_pred_test <- predict(classifier_RF, newdata = X_randomforest_test, type = "prob")
+rf_pred_test <- predict(Random_Forests_model, newdata = X_randomforest_test, type = "prob")
 rf_pred_test <- rf_pred_test[,2]
 
 # Random forest model will have some 0 and 1 predicted probablities which will crash our logit_dev function
@@ -435,8 +427,6 @@ par(mai=c(.9,.9,.2,.1)) # format margins
 roc(prd, Y, prd_logit_interactions, Y, pred_CV, Y, rf_pred_train, Y, bty="n", main="In-Sample Model Comparison") # from roc.R
 
 legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="Model Reference")
-
-
 
 
 #####
