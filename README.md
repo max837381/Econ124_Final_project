@@ -11,7 +11,9 @@ Our project explores the question: How can machine learning help us predict coll
 We find this interesting because most studies regarding college completion are prospective of high school students, whereas we are trying to find out if you have already completed college based on certain characteristics. This study can answer questions such as, “if you are married, are you more likely to have completed college?” and “if you are ‘x’ race, are you more likely to have a bachelor’s degree?”. 
 
 **Data**
-	Our data comes from the CPS, which is a monthly survey that records data from approximately 60,000 households in the United States. The United States Census Bureau conducts this survey for the Bureau of Labor Statistics, and this survey is available to the public for anyone to analyze. We decided to subset the data to the months of December 2021 and January 2022.
+
+
+Our data comes from the CPS, which is a monthly survey that records data from approximately 60,000 households in the United States. The United States Census Bureau conducts this survey for the Bureau of Labor Statistics, and this survey is available to the public for anyone to analyze. We decided to subset the data to the months of December 2021 and January 2022.
 	
 
 
