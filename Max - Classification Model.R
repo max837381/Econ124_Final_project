@@ -403,7 +403,7 @@ source("roc.R")
 cutoff_points = c(0.1,0.2,0.3,0.4,0.5,0.6,0.8,0.9)
 cutoff_colors = c("blue","red","green","yellow","purple", "darkgreen", "brown", "pink")
 
-# IS curve
+# OOS curve
 par(mai=c(.9,.9,.2,.1)) # format margins
 roc(rf_pred_test, Y_test, bty="n", main="Out-of-sample ROC Random Forests") # from roc.R
 
