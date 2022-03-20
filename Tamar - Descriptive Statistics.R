@@ -47,13 +47,16 @@ race_college_totals2 <- filter(race_college_totals, college == 1)
 race_college_barplot_df <- cbind(race_totals, race_college_totals2)
 race_college_barplot_df$college_totals <- race_college_barplot_df[,5]
 race_college_barplot_df <- subset(race_college_barplot_df, select = -c(3,4,5))
+race_college_barplot_df$race_group[race_college_barplot_df$race_group == 2] <- "Black"
+race_college_barplot_df$race_group[race_college_barplot_df$race_group == 3] <- "Native-American"
+race_college_barplot_df$race_group[race_college_barplot_df$race_group == 4] <- "Asian/Pacific Islander"
+race_college_barplot_df$race_group[race_college_barplot_df$race_group == 5] <- "Mixed"
 
 ggplot(data= race_college_barplot_df, aes(x=race_group)) +
   theme(plot.title = element_text(hjust = 0.5)) +
   geom_bar(aes(y=totals), stat="identity", position ="identity", alpha=1, fill='lightblue') +
-  geom_bar(aes(y=college_totals), stat="identity", position="identity", alpha=1, fill='orangered') +
+  geom_bar(aes(y=college_totals), stat="identity", position="identity", alpha=1, fill='palegreen3') +
   ggtitle("Total Number of Individuals Who Completed College by Race") +
-  legend
   xlab("Race Group") +
   ylab("Total Number of Individuals") #plots the total number of people who completed college by race
 
