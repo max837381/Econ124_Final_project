@@ -7,15 +7,14 @@
 # These packages will be used. Commented out since you may some of these already!
 
 #install.packages("randomForest")
-#install.packages(dplyr)
-#install.packages(tidyr)
-#install.packages(ggplot2)
-#install.packages(gamlr)
+#install.packages("dplyr")
+#install.packages("tidyr")
+#install.packages("ggplot2")
+#install.packages("gamlr")
 
 # Administrative cleanup
 # Clearing the environment, setting the seed and loading packages we will use in our project.
 rm(list = ls())
-if(!is.null(dev.list())) dev.off()
 set.seed(124)
 library(dplyr)
 library(tidyr)
@@ -166,7 +165,7 @@ legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="
 ### Part 3: Logit Model with interaction terms
 ###################################################################################################
 # Logistic regression with some interaction terms (could not interact everything since the glm command would crash R)
-# Even with some interaction terms might take 1-2 minutes to run
+# IMPORTANT: Even with some interaction terms might take 1-2 minutes to run
 logmodel_interactions <- glm(college ~ STATEFIP + (SEX + RACE + EMPSTAT + AGE)^2 +., data=train, family = "binomial")
 summary(logmodel_interactions)
 
@@ -376,7 +375,7 @@ cutoff_colors = c("blue","red","green","yellow","purple", "darkgreen", "brown", 
 
 # IS curve
 par(mai=c(.9,.9,.2,.1)) # format margins
-roc(rf_pred_train, Y, bty="n", main="In-sample ROC Cross-Validation") # from roc.R
+roc(rf_pred_train, Y, bty="n", main="In-sample ROC Random Forests") # from roc.R
 
 # For loop to make my code more concise
 for (i in cutoff_points){
@@ -406,7 +405,7 @@ cutoff_colors = c("blue","red","green","yellow","purple", "darkgreen", "brown", 
 
 # IS curve
 par(mai=c(.9,.9,.2,.1)) # format margins
-roc(rf_pred_test, Y_test, bty="n", main="In-sample ROC Cross-Validation") # from roc.R
+roc(rf_pred_test, Y_test, bty="n", main="Out-of-sample ROC Random Forests") # from roc.R
 
 # For loop to make my code more concise
 for (i in cutoff_points){
