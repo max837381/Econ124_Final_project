@@ -25,11 +25,11 @@ library(gamlr)
 # Read in the data from CPS
 df <- read.csv("cps_00010.csv")
 
-# Coding our Y variable - whether someone completed college or not (the minimum required is a Bachelor's Degree)
-df$college <- ifelse(df$EDUC>=111,1,0)
-
 # Removing white people from our sample, only focusing on POCs.
 df <- df[df$RACE!=100,]
+
+# Coding our Y variable - whether someone completed college or not (the minimum required is a Bachelor's Degree)
+df$college <- ifelse(df$EDUC>=111,1,0)
 
 # Remove single observations (will cause problems in training set and test set split)
 df <- df[df$CLASSWKR!=29,]
@@ -470,7 +470,7 @@ hist(rf_pred_test, main ="Random Forests", xlab = "Out-of-sample Predicted Proba
 # In-sample Binomial Deviance
 #####
 
-# function to compute binomial deviance (log-likelihood)
+# function to compute binomial deviance
 logit_dev <- function(y, pred) {
   return( -2*sum( y*log(pred) + (1-y)*log(1-pred) ) )
 }
