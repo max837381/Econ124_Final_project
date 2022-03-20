@@ -12,4 +12,4 @@ We are using CPS data to perform binomial deviance calculations using logistic r
 
 ![](https://github.com/bigfinanceguy/Econ124_Final_project/blob/master/8%20MODEL%20ROC.png =250x250)
 
-<img src="https://github.com/bigfinanceguy/Econ124_Final_project/blob/master/8%20MODEL%20ROC.png" width="48">
+<img src="https://github.com/bigfinanceguy/Econ124_Final_project/blob/master/8%20MODEL%20ROC.png" width="400">
