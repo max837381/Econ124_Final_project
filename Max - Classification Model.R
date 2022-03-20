@@ -141,7 +141,7 @@ legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="
 ####
 
 # Computing predicted probabilities for out-of-sample data using the test set
-prd2<- predict(logmodel, test, type = "response")
+prd_oos<- predict(logmodel, test, type = "response")
 
 # Setting seed and loading in the ROC.R
 set.seed(124)
@@ -152,11 +152,11 @@ cutoff_colors = c("blue","red","green","yellow","purple", "darkgreen", "brown", 
 
 # OOS Logit curve
 par(mai=c(.9,.9,.2,.1)) # format margins
-roc(prd2, Y_test, bty="n", main="Out-of-sample ROC Initial Logit Model") # from roc.R
+roc(prd_oos, Y_test, bty="n", main="Out-of-sample ROC Initial Logit Model") # from roc.R
 
 # For loop to make my code more concise
 for (i in cutoff_points){
-  points(x=1-mean((prd2<=i)[Y_test==0]), y=mean((prd2>i)[Y_test==1]), cex=1.5, pch=20, col=cutoff_colors[match(i,cutoff_points)])
+  points(x=1-mean((prd_oos<=i)[Y_test==0]), y=mean((prd_oos>i)[Y_test==1]), cex=1.5, pch=20, col=cutoff_colors[match(i,cutoff_points)])
 }
 
 legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="cutoffs")
@@ -334,7 +334,7 @@ Y_randomforest_test <- factor(test$college)
 X_randomforest_test <- as.matrix(test[colnames(test)!="college"])
 
 
-# Random Forest model
+# Random Forest model with 300 trees
 Random_Forests_model = randomForest(x = X_randomforest,
                              y = Y_randomforest,
                              ntree = 300)
@@ -441,7 +441,7 @@ cutoff_colors = c("1","2","3","4")
 
 # OOs curve
 par(mai=c(.9,.9,.2,.1)) # format margins
-roc(prd2, Y_test, prd_logit_interactions_oos, Y_test, pred_CV_oos, Y_test, rf_pred_test, Y_test, bty="n", main="Out-of-Sample Model Comparison") # from roc.R
+roc(prd_oos, Y_test, prd_logit_interactions_oos, Y_test, pred_CV_oos, Y_test, rf_pred_test, Y_test, bty="n", main="Out-of-Sample Model Comparison") # from roc.R
 
 legend("bottomright",fill=cutoff_colors, legend=c(cutoff_points),bty="n",title="Model Reference")
 
@@ -460,7 +460,7 @@ hist(rf_pred_train, main ="Random Forests", xlab = "In-sample Predicted Probabil
 #########
 # Plotting the histogram of predicted probabilities
 par(mfrow=c(2,2))
-hist(prd2, main ="Logit Model", xlab = "Out-of-sample Predicted Probabilities",col='orangered2')
+hist(prd_oos, main ="Logit Model", xlab = "Out-of-sample Predicted Probabilities",col='orangered2')
 hist(prd_logit_interactions_oos, main ="Logit Interactions Model", xlab = "Out-of-sample Predicted Probabilities", col='lightblue')
 hist(pred_CV_oos, main ="Cross-Validation", xlab = "Out-of-sample Predicted Probabilities", col='palegreen3')
 hist(rf_pred_test, main ="Random Forests", xlab = "Out-of-sample Predicted Probabilities", col='thistle2')
@@ -493,7 +493,7 @@ cat("The in-sample binomial deviance for our Random Forests model is", bin_dev_r
 #####
 
 # Computing binomial deviance for out-of-sample with all models
-bin_dev_logit_oos <- logit_dev(Y_test, prd2)
+bin_dev_logit_oos <- logit_dev(Y_test, prd_oos)
 cat("The out-of-sample binomial deviance for our logit model is", bin_dev_logit_oos)
 
 bin_dev_logit_interaction_oos <- logit_dev(Y_test,prd_logit_interactions_oos)
