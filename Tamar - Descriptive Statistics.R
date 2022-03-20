@@ -34,15 +34,9 @@ race_totals <- df %>%
   summarise(totals=sum(tabulate(race_group))) #data with the total number of each race group
 race_college_totals <- df %>%
   group_by(race_group, college) %>%
-  summarise(totals=sum(tabulate(race_group)))
+  summarise(totals=sum(tabulate(race_group))) #data with the total number that completed college of each race
 
-ggplot(race_college_totals, aes(y=totals, x=race_group, fill=college)) +
-  geom_bar(position = "dodge", stat = "identity") +
-  ggtitle("Total Number of Individuals Who \n Completed College by Race") +
-  xlab("Race Group") +
-  ylab("Total Number of Individuals") #plots the total number of people who completed college by race
-
-## MAX test
+#building dataframe for barplot
 race_college_totals2 <- filter(race_college_totals, college == 1)
 race_college_barplot_df <- cbind(race_totals, race_college_totals2)
 race_college_barplot_df$college_totals <- race_college_barplot_df[,5]
@@ -56,7 +50,7 @@ ggplot(data= race_college_barplot_df, aes(x=race_group)) +
   theme(plot.title = element_text(hjust = 0.5)) +
   geom_bar(aes(y=totals), stat="identity", position ="identity", alpha=1, fill='lightblue') +
   geom_bar(aes(y=college_totals), stat="identity", position="identity", alpha=1, fill='palegreen3') +
-  ggtitle("Total Number of Individuals Who Completed College by Race") +
+  ggtitle("Total Number of Individuals Who \n Completed College by Race") +
   xlab("Race Group") +
   ylab("Total Number of Individuals") #plots the total number of people who completed college by race
 
@@ -66,13 +60,24 @@ gender_totals <- df %>%
   summarise(totals=sum(tabulate(SEX))) #data with the total number of each gender
 gender_college_totals <- df %>%
   group_by(SEX, college) %>%
-  summarise(totals=sum(tabulate(SEX))) #data with the total number that completed 
-#college of each gender
-ggplot(gender_college_totals, aes(y=totals, x=SEX, fill=college)) +
-  geom_bar(position = "dodge", stat = "identity") +
+  summarise(totals=sum(tabulate(SEX))) #data with the total number that completed college of each gender
+
+#building data frame for barplot
+gender_college_totals2 <- filter(gender_college_totals, college == 1)
+gender_college_barplot_df <- cbind(gender_totals, gender_college_totals2)
+gender_college_barplot_df$college_totals <- gender_college_barplot_df[,5]
+gender_college_barplot_df <- subset(gender_college_barplot_df, select = -c(3,4,5))
+gender_college_barplot_df$SEX[gender_college_barplot_df$SEX == 1] <- "Men"
+gender_college_barplot_df$SEX[gender_college_barplot_df$SEX == 2] <- "Women"
+
+ggplot(data= gender_college_barplot_df, aes(x=SEX)) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  geom_bar(aes(y=totals), stat="identity", position ="identity", alpha=1, fill='lightblue') +
+  geom_bar(aes(y=college_totals), stat="identity", position="identity", alpha=1, fill='palegreen3') +
   ggtitle("Total Number of Individuals Who \n Completed College by Gender") +
   xlab("Gender") +
-  ylab("Total Number of Individuals") #plots the total number of people who completed college by income group
+  ylab("Total Number of Individuals") #plots the total number of people who completed college by race
+
 
 #Family Income Descriptive Statistics
 #income grouping
@@ -97,10 +102,22 @@ income_totals <- df %>%
   summarise(totals=sum(tabulate(income_group))) #data with the total number of each income group
 income_college_totals <- df %>%
   group_by(income_group, college) %>%
-  summarise(totals=sum(tabulate(income_group)))
+  summarise(totals=sum(tabulate(income_group)))  #data with the total number that completed college of each income group
 
-ggplot(income_college_totals, aes(y=totals, x=income_group, fill=college)) +
-  geom_bar(position = "dodge", stat = "identity") +
+#building dataframe for barplot
+income_college_totals2 <- filter(income_college_totals, college == 1)
+income_college_barplot_df <- cbind(income_totals, income_college_totals2)
+income_college_barplot_df$college_totals <- income_college_barplot_df[,5]
+income_college_barplot_df <- subset(income_college_barplot_df, select = -c(3,4,5))
+income_college_barplot_df$income_group[income_college_barplot_df$income_group == 1] <- "Lower"
+income_college_barplot_df$income_group[income_college_barplot_df$income_group == 2] <- "Lower-Middle"
+income_college_barplot_df$income_group[income_college_barplot_df$income_group == 3] <- "Upper-Middle"
+income_college_barplot_df$income_group[income_college_barplot_df$income_group == 4] <- "Upper"
+
+ggplot(data= income_college_barplot_df, aes(x=income_group)) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  geom_bar(aes(y=totals), stat="identity", position ="identity", alpha=1, fill='lightblue') +
+  geom_bar(aes(y=college_totals), stat="identity", position="identity", alpha=1, fill='palegreen3') +
   ggtitle("Total Number of Individuals Who \n Completed College by Income Group") +
   xlab("Income Group") +
   ylab("Total Number of Individuals") #plots the total number of people who completed college by income group
